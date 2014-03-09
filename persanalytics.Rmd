@@ -1,0 +1,49 @@
+============================
+
+### keystroke data ###
+
+The following will plot the count of minutes with keystroke recordings on my Airspace machine.
+
+```{r setwd, echo=FALSE}
+setwd("~/persanalytics/")
+```
+
+```{r importData, message=FALSE}
+library(lubridate)
+library(ggplot2)
+library(grid)
+keys <- read.csv("~/log/keystrokes.log")
+
+keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01")
+keys$hour <- hour(keys$rtime) # extract hour component
+keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
+
+daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+```
+
+```{r polarplot, fig.width=13}
+keys.plot <- ggplot(keys, aes(x=hour)) + #
+	geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
+	coord_polar(start = 0) +
+	theme_minimal() +
+	ylab("No. of mins per hour") +
+	xlab("Hours (24)") +
+	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
+	ggtitle("No. of mins with keystrokes per hour (all time)"
+)
+
+keys.plot2 <- ggplot(keys, aes(x=day)) + #
+	geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(1, 8), width=1) +
+	coord_polar(start = 1) +
+	theme_minimal() +
+	ylab("No. of mins per hour") +
+	xlab("Days/week") +
+	ggtitle("No. of mins with keystrokes per day (all time)"
+)
+
+### draw next to each other
+pushViewport(viewport(layout = grid.layout(1, 2)))
+print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
