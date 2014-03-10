@@ -1,6 +1,6 @@
 ============================
 
-### keystroke data ###
+## keystroke data ##
 
 The following will plot the count of minutes with keystroke recordings on my Airspace machine.
 
@@ -12,7 +12,16 @@ setwd("~/persanalytics/")
 library(lubridate)
 library(ggplot2)
 library(grid)
-keys <- read.csv("~/log/keystrokes.log")
+
+airspace <- read.csv("~/log/keystrokes.log")
+shuttle <- read.csv("~/Dropbox/shuttle-log/keystrokes-Shuttle.log")
+
+airspace$machine <- 1
+shuttle$machine <- 2
+
+keys <- rbind(airspace, shuttle)
+keys$machine <- as.factor(keys$machine)
+levels(keys$machine) <- c("Airspace", "Shuttle")
 
 keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01")
 keys$hour <- hour(keys$rtime) # extract hour component
@@ -21,7 +30,9 @@ keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
 daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
 ```
 
-```{r polarplot, fig.width=13}
+### Overall ###
+
+```{r polarAll, fig.width=13}
 keys.plot <- ggplot(keys, aes(x=hour)) + #
 	geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
 	coord_polar(start = 0) +
@@ -29,7 +40,7 @@ keys.plot <- ggplot(keys, aes(x=hour)) + #
 	ylab("No. of mins per hour") +
 	xlab("Hours (24)") +
 	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-	ggtitle("No. of mins with keystrokes per hour (all time)"
+	ggtitle("No. of mins with keystrokes per hour\n (all time)"
 )
 
 keys.plot2 <- ggplot(keys, aes(x=day)) + #
@@ -38,7 +49,7 @@ keys.plot2 <- ggplot(keys, aes(x=day)) + #
 	theme_minimal() +
 	ylab("No. of mins per hour") +
 	xlab("Days/week") +
-	ggtitle("No. of mins with keystrokes per day (all time)"
+	ggtitle("No. of mins with keystrokes per day\n (all time)"
 )
 
 ### draw next to each other
@@ -47,3 +58,36 @@ print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
 ```
 
+### Split by machine ###
+
+I actually own two computers, **Airspace** is my home/desktop machine (17" laptop connected to a Thunderbolt display), and **Shuttle** is the machine I take to campus and elsewhere. Back when **Airspace** was my only machine, I used to take it to campus and use it at home, which explains why it has more keystroke data than **Shuttle** does:
+
+```{r polarSplit, fig.width=13}
+keys.plot <- ggplot(keys, aes(x=hour)) + #
+	geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
+	coord_polar(start = 0) +
+	theme_minimal() +
+	ylab("No. of mins per hour") +
+	xlab("Hours (24)") +
+	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
+	scale_fill_brewer(palette = "Paired") +
+	ggtitle("No. of mins with keystrokes per hour, split by machine\n (all time)"
+)
+
+keys.plot2 <- ggplot(keys, aes(x=day)) + #
+	geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
+	coord_polar(start = 1) +
+	theme_minimal() +
+	ylab("No. of mins per hour") +
+	xlab("Days/week") +
+	scale_fill_brewer(palette = "Paired") +
+	ggtitle("No. of mins with keystrokes per day, split by machine\n (all time)"
+)
+
+### draw next to each other
+pushViewport(viewport(layout = grid.layout(1, 2)))
+print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+The plots are not that nice gives the disparity between **Airspace** and **Shuttle**. That said, one can see that Sundays are the days I use **Airspace** the most, and **Shuttle** the least. So are evening hours very **Airspace**-heavy and **Shuttle**-light.

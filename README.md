@@ -15,9 +15,11 @@ persanalytics is an [R][R] markdown document (`.Rmd`) written in [RStudio][RStud
 
 I will plot everything using [ggplot2][ggplot2] because it's awesome.
 
-### Example plot ###
+### Example plots ###
 
-![](figure/polarplot.png)
+![](figure/polarAll.png)
+
+![](figure/polarSplit.png)
 
 [R]: https://en.wikipedia.org/wiki/R_Statistics
 [RStudio]: http://www.rstudio.com
