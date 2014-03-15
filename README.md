@@ -9,6 +9,8 @@ persanalytics contains (for now):
 
 This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process.
 
+My goal is to collect and visualize data that goes back years. Keystrokes, emails, messages/SMS, and any physical activities I can record. See [Stephen Wolfram's personal analytics post][wolfram].
+
 ### Technical notes ###
 
 persanalytics is an [R][R] markdown document (`.Rmd`) written in [RStudio][RStudio]. RStudio uses the [knitr][knitr] package to combine the R and markdown code into a single html document. I don't think you _have_ to use RStudio to edit and 'knit' R markdown files, but it makes it easier.
@@ -23,6 +25,7 @@ I will plot everything using [ggplot2][ggplot2] because it's awesome.
 
 ![](figure/polarSplit2014.png)
 
+[wolfram]: http://blog.stephenwolfram.com/2012/03/the-personal-analytics-of-my-life/
 [R]: https://en.wikipedia.org/wiki/R_Statistics
 [RStudio]: http://www.rstudio.com
 [minute]: https://github.com/tmcw/minute-agent
