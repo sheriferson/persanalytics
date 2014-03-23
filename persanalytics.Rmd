@@ -24,9 +24,18 @@ keys$machine <- as.factor(keys$machine)
 levels(keys$machine) <- c("Airspace", "Shuttle")
 
 keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01")
-keys$hour <- hour(keys$rtime) # extract hour component
-keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
 keys$year <- year(keys$rtime) # extract year
+keys$month <- month(keys$rtime)
+keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
+keys$mday <- mday(keys$rtime)
+keys$hour <- hour(keys$rtime) # extract hour component
+keys$min <- minute(keys$rtime)
+
+keys$xday <- paste(keys$year, keys$month, keys$mday, sep="-")
+keys$ytime <- paste(keys$hour, keys$min, sep=":")
+
+keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d"))
+keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M"))
 
 daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
 ```
@@ -117,4 +126,18 @@ keys.plot2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
 pushViewport(viewport(layout = grid.layout(1, 2)))
 print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+```
+
+What about the distribution of my keystrokes throughout the day?
+
+```{r keysOverTime, fig.width=14}
+library(scales)
+ggplot(keys, aes(x=xday, y=ytime)) + 
+	geom_point(aes(color=machine), alpha=.6, size=1) + 
+	theme_minimal(base_size=14) +
+	scale_y_datetime(breaks=date_breaks("1 hour"),
+									 labels = date_format("%H:%M")) +
+	xlab("Days") +
+	ylab("Hours of day") +
+	ggtitle("Distribution of keystrokes by machine throughout the day")
 ```

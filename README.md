@@ -25,6 +25,8 @@ I will plot everything using [ggplot2][ggplot2] because it's awesome.
 
 ![](figure/polarSplit2014.png)
 
+![](figure/keysOverTime.png)
+
 [wolfram]: http://blog.stephenwolfram.com/2012/03/the-personal-analytics-of-my-life/
 [R]: https://en.wikipedia.org/wiki/R_Statistics
 [RStudio]: http://www.rstudio.com
