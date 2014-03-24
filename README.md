@@ -27,6 +27,17 @@ I will plot everything using [ggplot2][ggplot2] because it's awesome.
 
 ![](figure/keysOverTime.png)
 
+### Data on the todo list ###
+
+The following data is being collected, I just need to figure out how to obtain/parse them.
+
+- IM chat logs (`xml`).
+- Email (incoming and outgoing).
+- [My last.fm][lastfm] scrobbled tracks (need to get API access and learn how to use it).
+
+[lastfm]: http://www.last.fm/user/thespeckofme
+
+
 [wolfram]: http://blog.stephenwolfram.com/2012/03/the-personal-analytics-of-my-life/
 [R]: https://en.wikipedia.org/wiki/R_Statistics
 [RStudio]: http://www.rstudio.com
