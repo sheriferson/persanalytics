@@ -36,13 +36,13 @@ Once I have enough data points in `data/todos.csv`, I'll start figuring out what
 
 ### Plots ###
 
-![](figure/polarAll.png)
+![](plots/polarAll.png)
 
-![](figure/polarSplit.png)
+![](plots/polarSplit.png)
 
-![](figure/polarSplit2014.png)
+![](plots/polarSplit2014.png)
 
-![](figure/keysOverTime.png)
+![](plots/keysOverTime.png)
 
 ### Data on the todo list ###
 
