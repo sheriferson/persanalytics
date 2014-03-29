@@ -2,7 +2,7 @@
 # and completed tasks, count them, save them to a .csv file
 # and plot those numbers
 
-setwd("~/persanalytics/")
+setwd("~/persanalytics/data/")
 
 # read current todo file
 tasksnow <- read.table("~/Dropbox/Text/tasks/tasks.txt", sep="|", header=FALSE, strip.white=TRUE)
