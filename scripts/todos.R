@@ -27,12 +27,12 @@ tdone <- nrow(tasksdone)
 # if it doesn't exist
 # write header, and then write data
 
-datatowrite <- ifelse(file.exists("data/todos.csv"),
+datatowrite <- ifelse(file.exists("todos.csv"),
                       paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"),
                       paste(paste("ttime", "tlist", "tcount", sep=","), paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"), sep="\n")
                       )
 
 # write to file
 write(datatowrite, 
-      file="data/todos.csv",
+      file="todos.csv",
       append=TRUE)
