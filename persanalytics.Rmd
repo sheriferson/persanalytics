@@ -1,157 +1,34 @@
+Personal analytics
 ============================
 
-## keystroke data ##
+## Overview ##
 
-The following will plot the count of minutes with keystroke recordings on my Airspace machine.
+- [keystroke data](#keystrokes)
 
-```{r setwd, echo=FALSE}
+```{r, message=FALSE, echo=FALSE}
 setwd("~/persanalytics/")
+source('scripts/keystrokes.R')
 ```
 
-```{r importData, message=FALSE}
-library(lubridate)
-library(ggplot2)
-library(grid)
+## keystroke data ##
+<a id="keystrokes"></a>
 
-airspace <- read.csv("~/log/keystrokes.log")
-shuttle <- read.csv("~/Dropbox/shuttle-log/keystrokes-Shuttle.log")
+Here is a general plot of the count of minutes with keystroke recordings on my Airspace machine.
 
-airspace$machine <- 1
-shuttle$machine <- 2
-
-keys <- rbind(airspace, shuttle)
-keys$machine <- as.factor(keys$machine)
-levels(keys$machine) <- c("Airspace", "Shuttle")
-
-keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01")
-keys$year <- year(keys$rtime) # extract year
-keys$month <- month(keys$rtime)
-keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
-keys$mday <- mday(keys$rtime)
-keys$hour <- hour(keys$rtime) # extract hour component
-keys$min <- minute(keys$rtime)
-
-keys$xday <- paste(keys$year, keys$month, keys$mday, sep="-")
-keys$ytime <- paste(keys$hour, keys$min, sep=":")
-
-keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d"))
-keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M"))
-
-daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
-```
-
-### Overall ###
-
-```{r polarAll, fig.width=14, tidy=FALSE}
-theme_set(theme_minimal(base_size = 14)) # increases base text size a little bit
-
-keys.plot <- ggplot(keys, aes(x=hour)) +
-  geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
-  coord_polar(start = 0) +
-  ylab("No. of mins per hour") +
-  xlab("Hours (24)") +
-  scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-  ggtitle("No. of mins with keystrokes per hour\n (all time)"
-)
-
-keys.plot2 <- ggplot(keys, aes(x=day)) +
-  geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(1, 8), width=1) +
-  coord_polar(start = 1) +
-  ylab("No. of mins per hour") +
-  xlab("Days/week") +
-  ggtitle("No. of mins with keystrokes per day\n (all time)"
-)
-
-### draw next to each other
-pushViewport(viewport(layout = grid.layout(1, 2)))
-print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-```
+![polarAll](plots/polarAll.png)
 
 ### Split by machine ###
 
-I actually own two computers, **Airspace** is my home/desktop machine (17" laptop connected to a Thunderbolt display), and **Shuttle** is the machine I take to campus and elsewhere. Back when **Airspace** was my only machine, I used to take it to campus and use it at home, which explains why it has more keystroke data than **Shuttle** does:
+However, I actually own two computers, **Airspace** is my home/desktop machine (17" laptop connected to a Thunderbolt display), and **Shuttle** is the machine I take to campus and elsewhere. Back when **Airspace** was my only machine, I used to take it to campus and use it at home, which explains why it has more keystroke data than **Shuttle** does:
 
-```{r polarSplit, fig.width=14, tidy=FALSE}
-keys.plot <- ggplot(keys, aes(x=hour)) +
-  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
-  coord_polar(start = 0) +
-  ylab("No. of mins per hour") +
-  xlab("Hours (24)") +
-  scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-  scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per hour, split by machine\n (all time)"
-)
-
-keys.plot2 <- ggplot(keys, aes(x=day)) +
-  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
-  coord_polar(start = 1) +
-  ylab("No. of mins per hour") +
-  xlab("Days/week") +
-  scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per day, split by machine\n (all time)"
-)
-
-### draw next to each other
-pushViewport(viewport(layout = grid.layout(1, 2)))
-print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-```
+![polarSplit](plots/polarSplit.png)
 
 The plots are not that nice gives the disparity between **Airspace** and **Shuttle**. That said, one can see that Sundays are the days I use **Airspace** the most, and **Shuttle** the least. So are evening hours very **Airspace**-heavy and **Shuttle**-light.
 
 What can I do to get a better view of recent data? Maybe I can look at data collected since 2014.
 
-```{r polarSplit2014, fig.width=14, tidy=FALSE}
-keys.plot <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
-  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
-  coord_polar(start = 0) +
-  ylab("No. of mins per hour") +
-  xlab("Hours (24)") +
-  scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-  scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per hour, split by machine\n (2014)"
-)
-
-keys.plot2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
-  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
-  coord_polar(start = 1) +
-  ylab("No. of mins per hour") +
-  xlab("Days/week") +
-  scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per day, split by machine\n (2014)"
-)
-
-### draw next to each other
-pushViewport(viewport(layout = grid.layout(1, 2)))
-print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
-```
+![polarSplit2014](plots/polarSplit2014.png)
 
 What about the distribution of my keystrokes throughout the day?
 
-```{r keysOverTime, fig.width=14}
-library(scales)
-ggplot(keys, aes(x=xday, y=ytime)) + 
-  geom_point(aes(color=machine), alpha=.6, size=1) + 
-  theme_minimal(base_size=14) +
-  scale_y_datetime(breaks=date_breaks("1 hour"),
-                   labels = date_format("%H:%M")) +
-  xlab("Days") +
-  ylab("Hours of day") +
-  guides(colour = guide_legend(override.aes = list(size = 4))) +
-  ggtitle("Distribution of keystrokes by machine throughout the day")
-```
-
-## cycling ##
-
-I use a [Garmin Edge 500][https://buy.garmin.com/en-US/US/into-sports/cycling/edge-500/prod36728.html] to track all my training and leisurely rides. After uploading the rides to the [Garmin Connect][http://connect.garmin.com/en-US/], I can export a `.csv` file, which is what I use for the plotting below.
-
-```{r importCycling, message=FALSE}
-cycling <- read.csv("cycling.csv")
-```
-
-```{r cyclingCleanup, message=FALSE}
-cycling$Calories <- as.numeric(gsub(",", "", cycling$Calories))
-cycling$Total.Strokes <- as.numeric(gsub(",", "", cycling$Total.Strokes))
-```
+![keysOverTime](plots/keysOverTime.png)
