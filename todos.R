@@ -28,8 +28,8 @@ tdone <- nrow(tasksdone)
 # write header, and then write data
 
 datatowrite <- ifelse(file.exists("data/todos.csv"),
-											paste(Sys.time(), tnow, tdone, sep=","),
-											paste(paste("ttime", "tnow", "tdone", sep=","), paste(Sys.time(), tnow, tdone, sep=","), sep="\n")
+											paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"),
+											paste(paste("ttime", "tlist", "tcount", sep=","), paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"), sep="\n")
 											)
 
 # write to file
