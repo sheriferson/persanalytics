@@ -9,12 +9,12 @@ tasksnow <- read.table("~/Dropbox/Text/tasks/tasks.txt", sep="|", header=FALSE, 
 
 # read file with completed tasks
 tasksdone <- read.table("~/Dropbox/Text/tasks/.tasks.txt.done", 
-												sep="|", 
-												header=FALSE, 
-												strip.white=TRUE,
-												quote = "",
-												row.names = NULL
-												)
+                        sep="|", 
+                        header=FALSE, 
+                        strip.white=TRUE,
+                        quote = "",
+                        row.names = NULL
+                        )
 
 # number of pending tasks
 tnow <- nrow(tasksnow)
@@ -28,11 +28,11 @@ tdone <- nrow(tasksdone)
 # write header, and then write data
 
 datatowrite <- ifelse(file.exists("data/todos.csv"),
-											paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"),
-											paste(paste("ttime", "tlist", "tcount", sep=","), paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"), sep="\n")
-											)
+                      paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"),
+                      paste(paste("ttime", "tlist", "tcount", sep=","), paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"), sep="\n")
+                      )
 
 # write to file
 write(datatowrite, 
-			file="data/todos.csv",
-			append=TRUE)
+      file="data/todos.csv",
+      append=TRUE)

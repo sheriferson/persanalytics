@@ -46,20 +46,20 @@ daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 theme_set(theme_minimal(base_size = 14)) # increases base text size a little bit
 
 keys.plot <- ggplot(keys, aes(x=hour)) +
-	geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
-	coord_polar(start = 0) +
-	ylab("No. of mins per hour") +
-	xlab("Hours (24)") +
-	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-	ggtitle("No. of mins with keystrokes per hour\n (all time)"
+  geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
+  coord_polar(start = 0) +
+  ylab("No. of mins per hour") +
+  xlab("Hours (24)") +
+  scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
+  ggtitle("No. of mins with keystrokes per hour\n (all time)"
 )
 
 keys.plot2 <- ggplot(keys, aes(x=day)) +
-	geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(1, 8), width=1) +
-	coord_polar(start = 1) +
-	ylab("No. of mins per hour") +
-	xlab("Days/week") +
-	ggtitle("No. of mins with keystrokes per day\n (all time)"
+  geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(1, 8), width=1) +
+  coord_polar(start = 1) +
+  ylab("No. of mins per hour") +
+  xlab("Days/week") +
+  ggtitle("No. of mins with keystrokes per day\n (all time)"
 )
 
 ### draw next to each other
@@ -74,22 +74,22 @@ I actually own two computers, **Airspace** is my home/desktop machine (17" lapto
 
 ```{r polarSplit, fig.width=14, tidy=FALSE}
 keys.plot <- ggplot(keys, aes(x=hour)) +
-	geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
-	coord_polar(start = 0) +
-	ylab("No. of mins per hour") +
-	xlab("Hours (24)") +
-	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-	scale_fill_brewer(palette = "Paired") +
-	ggtitle("No. of mins with keystrokes per hour, split by machine\n (all time)"
+  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
+  coord_polar(start = 0) +
+  ylab("No. of mins per hour") +
+  xlab("Hours (24)") +
+  scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
+  scale_fill_brewer(palette = "Paired") +
+  ggtitle("No. of mins with keystrokes per hour, split by machine\n (all time)"
 )
 
 keys.plot2 <- ggplot(keys, aes(x=day)) +
-	geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
-	coord_polar(start = 1) +
-	ylab("No. of mins per hour") +
-	xlab("Days/week") +
-	scale_fill_brewer(palette = "Paired") +
-	ggtitle("No. of mins with keystrokes per day, split by machine\n (all time)"
+  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
+  coord_polar(start = 1) +
+  ylab("No. of mins per hour") +
+  xlab("Days/week") +
+  scale_fill_brewer(palette = "Paired") +
+  ggtitle("No. of mins with keystrokes per day, split by machine\n (all time)"
 )
 
 ### draw next to each other
@@ -104,22 +104,22 @@ What can I do to get a better view of recent data? Maybe I can look at data coll
 
 ```{r polarSplit2014, fig.width=14, tidy=FALSE}
 keys.plot <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
-	geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
-	coord_polar(start = 0) +
-	ylab("No. of mins per hour") +
-	xlab("Hours (24)") +
-	scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-	scale_fill_brewer(palette = "Paired") +
-	ggtitle("No. of mins with keystrokes per hour, split by machine\n (2014)"
+  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
+  coord_polar(start = 0) +
+  ylab("No. of mins per hour") +
+  xlab("Hours (24)") +
+  scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
+  scale_fill_brewer(palette = "Paired") +
+  ggtitle("No. of mins with keystrokes per hour, split by machine\n (2014)"
 )
 
 keys.plot2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
-	geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
-	coord_polar(start = 1) +
-	ylab("No. of mins per hour") +
-	xlab("Days/week") +
-	scale_fill_brewer(palette = "Paired") +
-	ggtitle("No. of mins with keystrokes per day, split by machine\n (2014)"
+  geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
+  coord_polar(start = 1) +
+  ylab("No. of mins per hour") +
+  xlab("Days/week") +
+  scale_fill_brewer(palette = "Paired") +
+  ggtitle("No. of mins with keystrokes per day, split by machine\n (2014)"
 )
 
 ### draw next to each other
@@ -133,11 +133,25 @@ What about the distribution of my keystrokes throughout the day?
 ```{r keysOverTime, fig.width=14}
 library(scales)
 ggplot(keys, aes(x=xday, y=ytime)) + 
-	geom_point(aes(color=machine), alpha=.6, size=1) + 
-	theme_minimal(base_size=14) +
-	scale_y_datetime(breaks=date_breaks("1 hour"),
-									 labels = date_format("%H:%M")) +
-	xlab("Days") +
-	ylab("Hours of day") +
-	ggtitle("Distribution of keystrokes by machine throughout the day")
+  geom_point(aes(color=machine), alpha=.6, size=1) + 
+  theme_minimal(base_size=14) +
+  scale_y_datetime(breaks=date_breaks("1 hour"),
+                   labels = date_format("%H:%M")) +
+  xlab("Days") +
+  ylab("Hours of day") +
+  guides(colour = guide_legend(override.aes = list(size = 4))) +
+  ggtitle("Distribution of keystrokes by machine throughout the day")
+```
+
+## cycling ##
+
+I use a [Garmin Edge 500][https://buy.garmin.com/en-US/US/into-sports/cycling/edge-500/prod36728.html] to track all my training and leisurely rides. After uploading the rides to the [Garmin Connect][http://connect.garmin.com/en-US/], I can export a `.csv` file, which is what I use for the plotting below.
+
+```{r importCycling, message=FALSE}
+cycling <- read.csv("cycling.csv")
+```
+
+```{r cyclingCleanup, message=FALSE}
+cycling$Calories <- as.numeric(gsub(",", "", cycling$Calories))
+cycling$Total.Strokes <- as.numeric(gsub(",", "", cycling$Total.Strokes))
 ```
