@@ -12,36 +12,44 @@ setwd("~/persanalytics/")
 #                                                              888       
 #                                                              o888o      
 
-library(lubridate)
-library(ggplot2)
-library(grid)
-library(scales)
+library(lubridate) # to extract components of time/date easily
+library(ggplot2)  # for plotting
+library(grid) # to use with ggplot for putting plots next to each other
+library(scales) # specific use in labelling axes in plotting
 
-airspace <- read.csv("~/log/keystrokes.log")
-shuttle <- read.csv("~/Dropbox/shuttle-log/keystrokes-Shuttle.log")
+airspace <- read.csv("~/log/keystrokes.log") # home machine
+shuttle <- read.csv("~/Dropbox/shuttle-log/keystrokes-Shuttle.log") # portable machine
 
 airspace$machine <- 1
 shuttle$machine <- 2
 
-keys <- rbind(airspace, shuttle)
+keys <- rbind(airspace, shuttle) # merge data of two computers
 keys$machine <- as.factor(keys$machine)
-levels(keys$machine) <- c("Airspace", "Shuttle")
+levels(keys$machine) <- c("Airspace", "Shuttle") # label machines
 
-keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01")
+# The following block converts, breaks down, and puts together again
+# dates of several forms and formats
+# some columns will have POSIX-format time, and others will
+# contain individual components, such as year, month, day, etc.
+#
+# There is probably redundancy that can be cleaned up in the block.
+# It was written in a bit of a rush to try and get a few things working
+
+keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01") # convert numerical POSIX (1356747240) to readable data
 keys$year <- year(keys$rtime) # extract year
-keys$month <- month(keys$rtime)
+keys$month <- month(keys$rtime) # extract month
 keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
-keys$mday <- mday(keys$rtime)
+keys$mday <- mday(keys$rtime) # extract day of the month
 keys$hour <- hour(keys$rtime) # extract hour component
-keys$min <- minute(keys$rtime)
+keys$min <- minute(keys$rtime) # extract minute component
 
-keys$xday <- paste(keys$year, keys$month, keys$mday, sep="-")
-keys$ytime <- paste(keys$hour, keys$min, sep=":")
+keys$xday <- paste(keys$year, keys$month, keys$mday, sep="-") # create: yyyy-mm-dd
+keys$ytime <- paste(keys$hour, keys$min, sep=":") # create hh:mm
 
-keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d"))
-keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M"))
+keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d")) # convert to POSIX
+keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M")) # convert to POSIX
 
-daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday") # create vector of day names
 
 #                                                    oooo  oooo  
 #                                                    `888  `888  
@@ -55,7 +63,7 @@ theme_set(theme_minimal(base_size = 14)) # increases base text size a little bit
 
 png("plots/polarAll.png", width=1000)
 
-keys.plot <- ggplot(keys, aes(x=hour)) +
+keys.polarAll1 <- ggplot(keys, aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
   coord_polar(start = 0) +
   ylab("No. of mins per hour") +
@@ -64,7 +72,7 @@ keys.plot <- ggplot(keys, aes(x=hour)) +
   ggtitle("No. of mins with keystrokes per hour\n (all time)"
   )
 
-keys.plot2 <- ggplot(keys, aes(x=day)) +
+keys.polarAll2 <- ggplot(keys, aes(x=day)) +
   geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(1, 8), width=1) +
   coord_polar(start = 1) +
   ylab("No. of mins per hour") +
@@ -74,10 +82,10 @@ keys.plot2 <- ggplot(keys, aes(x=day)) +
 
 ### draw next to each other
 pushViewport(viewport(layout = grid.layout(1, 2)))
-print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(keys.polarAll1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(keys.polarAll2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
 
-dev.off()
+dev.off() # close device/file
 
 #                     oooo   o8o      .   
 #                     `888   `"'    .o8   
@@ -91,7 +99,7 @@ dev.off()
 
 png("plots/polarSplit.png", width=1000)
 
-keys.plot <- ggplot(keys, aes(x=hour)) +
+keys.polarSplit1 <- ggplot(keys, aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
   coord_polar(start = 0) +
   ylab("No. of mins per hour") +
@@ -101,7 +109,7 @@ keys.plot <- ggplot(keys, aes(x=hour)) +
   ggtitle("No. of mins with keystrokes per hour, split by machine\n (all time)"
   )
 
-keys.plot2 <- ggplot(keys, aes(x=day)) +
+keys.polarSplit2 <- ggplot(keys, aes(x=day)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
   coord_polar(start = 1) +
   ylab("No. of mins per hour") +
@@ -112,10 +120,10 @@ keys.plot2 <- ggplot(keys, aes(x=day)) +
 
 ### draw next to each other
 pushViewport(viewport(layout = grid.layout(1, 2)))
-print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(keys.polarSplit1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(keys.polarSplit2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
 
-dev.off()
+dev.off() # close device/file
 
 #                          .oooo.     .oooo.     .o        .o   
 #                        .dP""Y88b   d8P'`Y8b  o888      .d88   
@@ -129,7 +137,7 @@ dev.off()
 
 png("plots/polarSplit2014.png", width=1000)
 
-keys.plot <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
+keys.polarSplit2014_1 <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
   coord_polar(start = 0) +
   ylab("No. of mins per hour") +
@@ -139,7 +147,7 @@ keys.plot <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
   ggtitle("No. of mins with keystrokes per hour, split by machine\n (2014)"
   )
 
-keys.plot2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
+keys.polarSplit2014_2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
   coord_polar(start = 1) +
   ylab("No. of mins per hour") +
@@ -150,10 +158,10 @@ keys.plot2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
 
 ### draw next to each other
 pushViewport(viewport(layout = grid.layout(1, 2)))
-print(keys.plot, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(keys.plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(keys.polarSplit2014_1, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(keys.polarSplit2014_2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
 
-dev.off()
+dev.off() # close device/file
 
 # oooo                                                
 # `888                                                
@@ -165,7 +173,7 @@ dev.off()
 
 png("plots/keysOverTime.png", width=1000)
 
-gghours <- ggplot(keys, aes(x=xday, y=ytime)) + 
+keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) + 
   geom_point(aes(color=machine), alpha=.6, size=1) + 
   theme_minimal(base_size=14) +
   scale_y_datetime(breaks=date_breaks("1 hour"), labels = date_format("%H:%M")) +
@@ -174,6 +182,6 @@ gghours <- ggplot(keys, aes(x=xday, y=ytime)) +
   guides(colour = guide_legend(override.aes = list(size = 4))) +
   ggtitle("Distribution of keystrokes by machine throughout the day")
 
-print(gghours)
+print(keys.hoursAll)
 
-dev.off()
+dev.off() # close device/file
