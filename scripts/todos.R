@@ -83,7 +83,7 @@ todos.overall <- ggplot(todos, aes(x = ttime, y = tcount, group = tlist)) +
   theme_bw(base_size = 16) +
   xlab("Time") +
   ylab("Count") +
-  scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
+  scale_color_manual(name = "list", values=c("#00BFC4", "#F8766D")) +
     scale_x_datetime(breaks=date_breaks("1 day"), labels = date_format("%b %d"))
 
 print(todos.overall)
