@@ -61,7 +61,7 @@ daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 
 theme_set(theme_minimal(base_size = 14)) # increases base text size a little bit
 
-svg("plots/polarAll.svg", width=11)
+png("plots/polarAll.png", width=900)
 
 keys.polarAll1 <- ggplot(keys, aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
@@ -103,7 +103,7 @@ dev.off() # close device/file
 #           888                           
 #          o888o                          
 
-svg("plots/polarSplit.svg", width=13)
+png("plots/polarSplit.png", width=900)
 
 keys.polarSplit1 <- ggplot(keys, aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
@@ -149,7 +149,7 @@ dev.off() # close device/file
 #           888                                                 
 #          o888o                                                
 
-svg("plots/polarSplit2014.svg", width=13)
+png("plots/polarSplit2014.png", width=900)
 
 keys.polarSplit2014_1 <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +

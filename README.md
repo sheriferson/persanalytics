@@ -36,11 +36,11 @@ Once I have enough data points in `data/todos.csv`, I'll start figuring out what
 
 ### keystrokes ###
 
-![](plots/polarAll.svg)
+![](plots/polarAll.png)
 
-![](plots/polarSplit.svg)
+![](plots/polarSplit.png)
 
-![](plots/polarSplit2014.svg)
+![](plots/polarSplit2014.png)
 
 ![](plots/keysOverTime.png)
 
@@ -48,7 +48,7 @@ Once I have enough data points in `data/todos.csv`, I'll start figuring out what
 
 Nothing too interesting to plot out of those yet, so I'm just plotting the number of current and completed items for now.
 
-![](plots/todos.svg)
+![](plots/todos.png)
 
 ### Data on the todo list ###
 

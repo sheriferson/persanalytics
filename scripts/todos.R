@@ -17,8 +17,7 @@
 #                                                              888       
 #                                                              o888o      
 
-
-setwd("~/persanalytics/data/")
+setwd("~/persanalytics/")
 
 # read current todos file
 tasksnow <- read.table("~/Dropbox/Text/tasks/tasks.txt", 
@@ -52,12 +51,41 @@ tdone <- nrow(tasksdone)
 # time, number of now, number of done
 # if it doesn't exist, write header, and then write data
 
-datatowrite <- ifelse(file.exists("todos.csv"),
+datatowrite <- ifelse(file.exists("data/todos.csv"),
                       paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"),
                       paste(paste("ttime", "tlist", "tcount", sep=","), paste(paste(Sys.time(), "t", tnow, sep=","), paste(Sys.time(), "d", tdone, sep=","), sep="\n"), sep="\n")
                       )
 
 # write to file
 write(datatowrite, 
-      file="todos.csv",
+      file="data/todos.csv",
       append=TRUE)
+
+#            oooo                .   
+#            `888              .o8   
+# oo.ooooo.   888   .ooooo.  .o888oo 
+#  888' `88b  888  d88' `88b   888   
+#  888   888  888  888   888   888   
+#  888   888  888  888   888   888 . 
+#  888bod8P' o888o `Y8bod8P'   "888" 
+#  888                               
+# o888o                              
+
+library(scales) # for handling time breaks on x axis
+
+todos <- read.csv("data/todos.csv")
+todos$ttime <- as.POSIXct(todos$ttime)
+levels(todos$tlist) <- c("done", "current")
+png("plots/todos.png", width=900)
+
+todos.overall <- ggplot(todos, aes(x = ttime, y = tcount, group = tlist)) + 
+  geom_line(aes(colour = tlist), size = 2) +
+  theme_bw(base_size = 16) +
+  xlab("Time") +
+  ylab("Count") +
+  scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
+    scale_x_datetime(breaks=date_breaks("1 day"), labels = date_format("%b %d"))
+
+print(todos.overall)
+
+dev.off()
