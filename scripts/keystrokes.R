@@ -61,15 +61,18 @@ daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 
 theme_set(theme_minimal(base_size = 14)) # increases base text size a little bit
 
-png("plots/polarAll.png", width=1000)
+svg("plots/polarAll.svg", width=11)
 
 keys.polarAll1 <- ggplot(keys, aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
   coord_polar(start = 0) +
   ylab("No. of mins per hour") +
   xlab("Hours (24)") +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "none") +
   scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
-  ggtitle("No. of mins with keystrokes per hour\n (all time)"
+  ggtitle("Minutes with keystrokes /hour\n (all time)"
   )
 
 keys.polarAll2 <- ggplot(keys, aes(x=day)) +
@@ -77,7 +80,10 @@ keys.polarAll2 <- ggplot(keys, aes(x=day)) +
   coord_polar(start = 1) +
   ylab("No. of mins per hour") +
   xlab("Days/week") +
-  ggtitle("No. of mins with keystrokes per day\n (all time)"
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "none") +
+  ggtitle("Minutes with keystrokes /day\n (all time)"
   )
 
 ### draw next to each other
@@ -97,25 +103,33 @@ dev.off() # close device/file
 #           888                           
 #          o888o                          
 
-png("plots/polarSplit.png", width=1000)
+svg("plots/polarSplit.svg", width=13)
 
 keys.polarSplit1 <- ggplot(keys, aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
   coord_polar(start = 0) +
+  theme_minimal(base_size = 16) +
   ylab("No. of mins per hour") +
   xlab("Hours (24)") +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "bottom") +
   scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
   scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per hour, split by machine\n (all time)"
+  ggtitle("Minutes with keystrokes \n/hour /machine (all time)"
   )
 
 keys.polarSplit2 <- ggplot(keys, aes(x=day)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(1, 8), binwidth = 14, position = "dodge") +
   coord_polar(start = 1) +
+  theme_minimal(base_size = 16) +
   ylab("No. of mins per hour") +
   xlab("Days/week") +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "bottom") +
   scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per day, split by machine\n (all time)"
+  ggtitle("Minutes with keystrokes \n/day /machine (all time)"
   )
 
 ### draw next to each other
@@ -135,16 +149,19 @@ dev.off() # close device/file
 #           888                                                 
 #          o888o                                                
 
-png("plots/polarSplit2014.png", width=1000)
+svg("plots/polarSplit2014.svg", width=13)
 
 keys.polarSplit2014_1 <- ggplot(subset(keys, keys$year >= 2014), aes(x=hour)) +
   geom_histogram(aes(y = ..count.., fill= machine), breaks = seq(0, 24), binwidth = 48, position = "dodge") +
   coord_polar(start = 0) +
   ylab("No. of mins per hour") +
   xlab("Hours (24)") +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "bottom") +
   scale_x_continuous("", limits = c(0, 24), breaks = seq(0, 24), labels = seq(0, 24)) +
   scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per hour, split by machine\n (2014)"
+  ggtitle("Minutes with keystrokes \n/hour /machine (2014)"
   )
 
 keys.polarSplit2014_2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
@@ -152,8 +169,11 @@ keys.polarSplit2014_2 <- ggplot(subset(keys, keys$year >= 2014), aes(x=day)) + #
   coord_polar(start = 1) +
   ylab("No. of mins per hour") +
   xlab("Days/week") +
+  theme(axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        legend.position = "bottom") +
   scale_fill_brewer(palette = "Paired") +
-  ggtitle("No. of mins with keystrokes per day, split by machine\n (2014)"
+  ggtitle("Minutes with keystrokes \n/day /machine (2014)"
   )
 
 ### draw next to each other
@@ -171,15 +191,17 @@ dev.off() # close device/file
 #  888   888  888   888  888   888   888     o.  )88b 
 # o888o o888o `Y8bod8P'  `V88V"V8P' d888b    8""888P' 
 
-png("plots/keysOverTime.png", width=1000)
+png("plots/keysOverTime.png", width=900)
 
 keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) + 
-  geom_point(aes(color=machine), alpha=.6, size=1) + 
-  theme_minimal(base_size=14) +
+  geom_point(aes(color=machine), alpha=.7, size=1) + 
+  theme_minimal(base_size=16) +
   scale_y_datetime(breaks=date_breaks("1 hour"), labels = date_format("%H:%M")) +
   xlab("Days") +
   ylab("Hours of day") +
-  guides(colour = guide_legend(override.aes = list(size = 4))) +
+  theme(legend.position = "bottom") +
+  guides(colour = guide_legend(override.aes = list(size = 5))) +
+  scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
   ggtitle("Distribution of keystrokes by machine throughout the day")
 
 print(keys.hoursAll)

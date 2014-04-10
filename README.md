@@ -6,7 +6,6 @@ persanalytics contains (for now):
 
 - keystroke frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
 - Records of todo items (current and completed) managed using [t][t] (no plots, yet).
-- (_coming soon_) Details of my cycling training using data collected from a [Garmin Edge 500][Garmin500].
 
 This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process.
 
@@ -33,21 +32,29 @@ Finally, I am using [LaunchControl][LaunchControl] (a GUI for managing [launchd]
 Once I have enough data points in `data/todos.csv`, I'll start figuring out what plots I can make.
 
 
+## Plots ##
 
-### Plots ###
+### keystrokes ###
 
-![](plots/polarAll.png)
+![](plots/polarAll.svg)
 
-![](plots/polarSplit.png)
+![](plots/polarSplit.svg)
 
-![](plots/polarSplit2014.png)
+![](plots/polarSplit2014.svg)
 
 ![](plots/keysOverTime.png)
+
+### todos ###
+
+Nothing too interesting to plot out of those yet, so I'm just plotting the number of current and completed items for now.
+
+![](plots/todos.svg)
 
 ### Data on the todo list ###
 
 The following data is being collected, I just need to figure out how to obtain/parse them.
 
+- Cycling data collected using a [Garmin Edge 500][Garmin500].
 - IM chat logs (`xml`).
 - Email (incoming and outgoing).
 - [My last.fm][lastfm] scrobbled tracks.
