@@ -71,6 +71,7 @@ write(datatowrite,
 #  888                               
 # o888o                              
 
+library(ggplot2) # plotting
 library(scales) # for handling time breaks on x axis
 
 todos <- read.csv("data/todos.csv")

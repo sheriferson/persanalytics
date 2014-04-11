@@ -6,6 +6,7 @@ persanalytics contains (for now):
 
 - keystroke frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
 - Records of todo items (current and completed) managed using [t][t] (no plots, yet).
+- Cycling data collected using a [Garmin Edge 500][Garmin500].
 
 This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process.
 
@@ -50,11 +51,25 @@ Nothing too interesting to plot out of those yet, so I'm just plotting the numbe
 
 ![](plots/todos.png)
 
+### cycling ###
+
+My sensors don't measure which gear I'm in, so I created a pseudo "average gear" score:
+
+`gear score = total strokes / distance`
+
+The higher the value, the smaller the gear.
+
+- The larger the point, the higher the gear.
+- The redder the point, the higher the average heart rate .
+
+Average heart rate is a good metric for how intense a training session was.
+
+![](plots/cyclingGearHR.png)
+
 ### Data on the todo list ###
 
 The following data is being collected, I just need to figure out how to obtain/parse them.
 
-- Cycling data collected using a [Garmin Edge 500][Garmin500].
 - IM chat logs (`xml`).
 - Email (incoming and outgoing).
 - [My last.fm][lastfm] scrobbled tracks.
