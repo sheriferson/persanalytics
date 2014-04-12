@@ -7,6 +7,7 @@ persanalytics contains (for now):
 - keystroke frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
 - Records of todo items (current and completed) managed using [t][t] (no plots, yet).
 - Cycling data collected using a [Garmin Edge 500][Garmin500].
+- [My last.fm][lastfm] scrobbled tracks.
 
 This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process.
 
@@ -66,13 +67,23 @@ Average heart rate is a good metric for how intense a training session was.
 
 ![](plots/cyclingGearHR.png)
 
+### music ###
+
+I am especially happy that I could finally get my music data. There is a clear pattern that I long knew/suspected, but am still impressed I can see in the plots: I love music, but I'm been listening to less of it lately. My expanding podcast subscriptions are largely to blame for that. Why can't I have more than 24 hours a day... 
+
+![](plots/musicAll.png)
+
+Even though the following plot implies that I am "loving" fewer and fewer tracks as time goes on, that is false. I am always finding tracks that I can't stop listening to, I just don't use the "Love this track" feature of last.fm as much as I used to.
+
+![](plots/musicLoved.png)
+
 ### Data on the todo list ###
 
 The following data is being collected, I just need to figure out how to obtain/parse them.
 
 - IM chat logs (`xml`).
 - Email (incoming and outgoing).
-- [My last.fm][lastfm] scrobbled tracks.
+
 
 [minute]: https://github.com/tmcw/minute-agent
 [minute-sh]: https://github.com/sheriferson/minute-agent
