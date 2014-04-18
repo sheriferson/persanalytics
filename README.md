@@ -1,37 +1,16 @@
-### What is persanalytics? ###
+## What is persanalytics? ##
 
 persanalytics is a report and analysis document in which I hope to aggregate all the personal analytics I collect.
 
 persanalytics contains (for now):
 
-- keystroke frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
-- Records of todo items (current and completed) managed using [t][t] (no plots, yet).
-- Cycling data collected using a [Garmin Edge 500][Garmin500].
-- [My last.fm][lastfm] scrobbled tracks.
+- keystrokes: frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
+- todos: Records of todo items (current and completed) managed using [t][t] (no plots, yet).
+- cycling:  data collected using a [Garmin Edge 500][Garmin500].
+- music: [My last.fm][lastfm] scrobbled tracks.
+- instant messaging: chat logs (`xml`).
 
-This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process.
-
-My goal is to collect and visualize data that goes back years. Keystrokes, emails, messages/SMS, and any physical activities I can record. See [Stephen Wolfram's personal analytics post][wolfram].
-
-### Technical notes ###
-
-persanalytics is an [R][R] markdown document (`.Rmd`) written in [RStudio][RStudio]. RStudio uses the [knitr][knitr] package to combine the R and markdown code into a single html document. I don't think you _have_ to use RStudio to edit and 'knit' R markdown files, but it makes it easier.
-
-I will plot everything using [ggplot2][ggplot2] because it's awesome.
-
-### todos ###
-
-I use [t][t] to manage my todos, and I love it. It is the only task-management system that has ever worked for me.
-
-I wrote `todos.R` to load the text files `tasks.txt` and `.tasks.txt.done`, count the number of current and completed tasks, and append it to `data/todos.csv`.
-
-Finally, I am using [LaunchControl][LaunchControl] (a GUI for managing [launchd][launchd] jobs on OS X) to run the following command every 3600 seconds:
-
-```bash
-/usr/bin/rscript --vanilla Users/sherif/persanalytics/todos.R
-```
-
-Once I have enough data points in `data/todos.csv`, I'll start figuring out what plots I can make.
+This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process. My goal is to collect and visualize data that goes back years. Keystrokes, emails, messages/SMS, and any physical activities I can record. See [Stephen Wolfram's personal analytics post][wolfram].
 
 
 ## Plots ##
@@ -77,11 +56,62 @@ Even though the following plot implies that I am "loving" fewer and fewer tracks
 
 ![](plots/musicLoved.png)
 
+### instant messaging ###
+
+I love [regular expressions](http://regexone.com).
+
+I got around to merging and parsing the logs from my most recent IM account. According to the final tally, there are **79715** messages that I've sent and received using that account since September 2012.
+
+![](plots/chatOverall.png)
+
+<!-- --------------------------------------------- -->
+
+## Technical notes ##
+
+Now that we've looked at some sexy plots...
+
+persanalytics is a collection of [R][R] (`.R`) scripts written in [RStudio][RStudio]. Each script, when run, will perform all the needed merging, crunching, nip 'n tucking, and plotting needed to arrive at the final plots, and saves them to `peranalytics/plots/`.
+
+All plots are made using [ggplot2][ggplot2] because it's awesome.
+
+### keystrokes ###
+
+As mentioned above, keystrokes frequencies per min are collected using [minute-agent][minute]. `keystrokes.R` reads the `.log` file and handles the rest.
+
+### todos ###
+
+I use [t][t] to manage my todos, and I love it. It is the only task-management system that has ever worked for me.
+
+`t` saves current todos in a file called `tasks.txt` and all completed todos in `.tasks.txt.done`. `todos.R` reads both text files, counts the number of current and completed tasks, and appends it to `data/todos.csv`. It also produces the above plot.
+
+I am using [LaunchControl][LaunchControl] (a GUI for managing [launchd][launchd] jobs on OS X) to run the following command every 3600 seconds:
+
+```bash
+/usr/bin/rscript --vanilla Users/sherif/persanalytics/todos.R
+```
+
+### music ###
+
+I [scrobble](http://www.last.fm/help/faq?category=Scrobbling) all [my music](http://www.last.fm/user/thespeckofme). last.fm allows you to request your archive. You receive `.tsv` and `.json` files of your total, loved, banned, bootstrapped, and skipped tracks. `music.R` reads in the `.tsv` file and does what it does.
+
+### instant messaging ###
+
+I've been using [Adium](https://www.adium.im) since I first started using a Mac. This was a great decision because it means that even back when I was using Google Chat, I had all my chat logs stored locally. Adium saves chat logs in
+
+`~/Library/Application Support/Adium 2.0/Users/Default/Logs`
+
+However, I keep my Adium 2.0 folder [symlinked](https://en.wikipedia.org/wiki/Symbolic_link) on Dropbox, which means that all my settings and chat logs are keps in sync between my two computers. It works surprisingly well.
+
+Within `Logs`, there is a folder per account, within those there is a folder per contact, within those a folder (with an extension `.chatlog`) per conversation, and within those `.xml` files.
+
+`IM.R` executes a bash command to `cat` all of those scattered `.xml` files into one `mergedIM.xml` file, which it then reads in and does some regex stuff to split it into the interesting components.
+
+If there is an easy way to parse `xml` using R, I don't know it.
+
 ### Data on the todo list ###
 
 The following data is being collected, I just need to figure out how to obtain/parse them.
 
-- IM chat logs (`xml`).
 - Email (incoming and outgoing).
 
 
