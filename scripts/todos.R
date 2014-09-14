@@ -1,7 +1,13 @@
+#     .                   .o8            
+#   .o8                  "888            
+# .o888oo  .ooooo.   .oooo888   .ooooo.  
+#   888   d88' `88b d88' `888  d88' `88b 
+#   888   888   888 888   888  888   888 
+#   888 . 888   888 888   888  888   888 
+#   "888" `Y8bod8P' `Y8bod88P" `Y8bod8P' 
+
 # A quick script to load in the text files for current
 # and completed tasks, count them, save them to a .csv file.
-
-# Plotting coming soon.
 
 # It is important to note that these todos are being managed by a program
 # that I currently have no control over. I have to deal with the formatting
@@ -88,5 +94,4 @@ todos.overall <- ggplot(todos, aes(x = ttime, y = tcount, group = tlist)) +
     scale_x_datetime(breaks=date_breaks("1 day"), labels = date_format("%b %d"))
 
 print(todos.overall)
-
 dev.off()

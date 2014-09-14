@@ -24,11 +24,11 @@ library(plyr) # so we can use rbind.fill to merge datasets of different col leng
 setwd("~/persanalytics/")
 
 # load huge file of all scrobbled tracks, tag it with s
-scrobbles <- read.table("data/lastm/data/scrobbles.tsv", sep="\t", header=TRUE)
+scrobbles <- read.table("data/lastfm/data/scrobbles.tsv", sep = "\t", header = TRUE)
 scrobbles$type = "s"
 
 # load file with loved tracks, tag it with l
-loved <- read.table("data/lastm/data/loved.tsv", sep="\t", header=TRUE)
+loved <- read.table("data/lastfm/data/loved.tsv", sep = "\t", header = TRUE)
 loved$type = "l"
 
 # merge the two files

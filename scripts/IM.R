@@ -14,20 +14,36 @@ library(scales)   # help with formatting axes in plots
 # log files into one big merged one. Then switches back to default
 # working directory.
 setwd("~/persanalytics/data/IM/Jabber.sherif@ssoliman.com/")
-system('find . -type f -print0 | xargs -0 cat > ~/persanalytics/data/IM/mergedIM.xml')
+system('find . -type f -print0 | xargs -0 cat > ~/persanalytics/data/IM/mergedIM_ss.xml')
+
+setwd("~/persanalytics/data/IM/Jabber.sherif@fastmail.fm")
+system('find . -type f -print0 | xargs -0 cat > ~/persanalytics/data/IM/mergedIM_fm.xml')
+
+setwd("~/persanalytics/data/IM/GTalk.thespeckofme@gmail.com/")
+system('find . -type f -print0 | xargs -0 cat > ~/persanalytics/data/IM/mergedIM_gm.xml')
+
 setwd("~/persanalytics/")
 
-# load data file
-clogs <- readLines("data/IM/mergedIM.xml")
+# load data files
+clogs_s <- as.data.frame(readLines("data/IM/mergedIM_ss.xml"))
+colnames(clogs_s) <- c("raw")
+clogs_s$account = 3
+
+clogs_f <- as.data.frame(readLines("data/IM/mergedIM_fm.xml"))
+colnames(clogs_f) <- c("raw")
+clogs_f$account = 2
+
+clogs_g <- as.data.frame(readLines("data/IM/mergedIM_gm.xml"))
+colnames(clogs_g) <- c("raw")
+clogs_g$account = 1
+
+clogs <- rbind(clogs_g, clogs_f, clogs_s)
 
 # remove lines that contain status updates, sign ons, etc.
 # those can be fun to play with later. For now, I only want
 # messages.
-mess <- clogs[grep("^<message", clogs)]
-
-# make into a data frame, and name first column 'raw'.
-mess <- as.data.frame(mess)
-colnames(mess) <- c("raw")
+mess <- clogs[grep("^<message", clogs$raw),]
+mess$account <- as.factor(mess$account)
 
 # Extract sender email.
 mess$senderemail <- str_extract(mess$raw, perl('(?<=sender=\").+@.+com(?=\")'))
@@ -36,7 +52,7 @@ mess$senderemail <- str_extract(mess$raw, perl('(?<=sender=\").+@.+com(?=\")'))
 mess$side <- as.factor(ifelse(mess$senderemail=="sherif@ssoliman.com", 'sherif', 'other'))
 
 # Extract time
-mess$time <- str_extract(mess$raw, perl('(?<=time=\").*?(?=-[0-9]{2}:?[0-9]{2}\")'))
+mess$time <- str_extract(mess$raw, perl('(?<=time=\").*?(?=[-+][0-9]{2}:?[0-9]{2}\")'))
 
 # Do some cleanup, then create one column for yyyy-mm-dd,
 # and another for hh:mm:ss
@@ -69,18 +85,19 @@ mess$message <- gsub("<span.+?>", "", mess$message)
 png("plots/chatOverall.png", width = 900)
 
 mess.overall <- ggplot(mess, aes(x = days, y = clock)) + 
-  geom_point(color = "#1A9FF9", alpha = .7, size = 1) +
+  geom_point(aes(color = account), alpha = .7, size = 1) +
   theme_bw(base_size = 16) +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(colour = guide_legend(override.aes = list(size = 5))) +
-  scale_x_datetime(breaks = date_breaks("1 month"), labels = date_format("%Y/%m")) +
+  scale_x_datetime(breaks = date_breaks("4 months"), labels = date_format("%Y/%m")) +
   scale_y_datetime(breaks = date_breaks("1 hour"), labels = date_format("%H:%M")) +
+#   scale_color_manual(name = "acc", values=c("#0C3452", "#0B5CA0", "#1A9FF9")) +
   xlab("Days (Year/month)") +
   ylab("Hours of day") +
-  ggtitle("Instant messages sent/received since 2012")
+  ggtitle("Instant messages sent/received since 2009")
 
 print(mess.overall)
 dev.off()

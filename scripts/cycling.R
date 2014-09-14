@@ -51,9 +51,9 @@ cycling.GearHR <- ggplot(cycling, aes(x=pseudoAvgGear, y=Avg.HR)) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         legend.position="none") +
+  geom_smooth(colour = "#00BFC4", size = 1.5, alpha=.20, method = "loess") +
   geom_point(aes(size = (1/pseudoAvgGear)+2, colour = Avg.HR)) + 
   scale_colour_continuous(low="white", high="red") +
-  geom_smooth(colour = "#00BFC4", size = 1.5, alpha=.20, method = "loess") +
   xlab("Pseudo average gear score (total strokes / distance)") +
   scale_x_reverse() +
   ylab("Average heart rate (bpm)")

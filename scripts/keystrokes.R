@@ -1,4 +1,12 @@
-# script for crunching and plotting keystroke data
+# `888                                       
+#  oooo                                       
+#  888  oooo   .ooooo.  oooo    ooo  .oooo.o 
+#  888 .8P'   d88' `88b  `88.  .8'  d88(  "8 
+#  888888.    888ooo888   `88..8'   `"Y88b.  
+#  888 `88b.  888    .o    `888'    o.  )88b 
+# o888o o888o `Y8bod8P'     .8'     8""888P' 
+#                       .o..P'               
+#                       `Y8P'                
 
 setwd("~/persanalytics/")
 
