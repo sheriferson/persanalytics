@@ -202,12 +202,22 @@ dev.off() # close device/file
 png("plots/keysOverTime.png", width=900)
 
 keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) + 
-  geom_point(aes(color=machine), alpha=.7, size=1) + 
+  geom_point(aes(color=machine), alpha=.7, size=.9) + 
   theme_minimal(base_size=16) +
-  scale_y_datetime(breaks=date_breaks("1 hour"), labels = date_format("%H:%M")) +
   xlab("Days") +
   ylab("Hours of day") +
-  theme(legend.position = "bottom") +
+#   ylim(rev(range(keys$ytime))) +
+  scale_y_datetime(breaks=date_breaks("1 hour"),
+                   labels = date_format("%H:%M"),
+                   limits = range(keys$ytime),
+                   expand = c(0,60)) +
+  scale_x_datetime(breaks=date_breaks("1 month"), 
+                   labels = date_format("%b %Y"),
+                   limits = range(keys$xday),
+                   expand = c(0.03,0)
+                   ) +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(colour = guide_legend(override.aes = list(size = 5))) +
   scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
   ggtitle("Distribution of keystrokes by machine throughout the day")
