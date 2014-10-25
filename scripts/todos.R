@@ -91,7 +91,7 @@ todos.overall <- ggplot(todos, aes(x = ttime, y = tcount, group = tlist)) +
   xlab("Time") +
   ylab("Count") +
   scale_color_manual(name = "list", values=c("#00BFC4", "#F8766D")) +
-    scale_x_datetime(breaks=date_breaks("1 week"), labels = date_format("%b %d"))
+    scale_x_datetime(breaks=date_breaks("2 weeks"), labels = date_format("%b %d"))
 
 print(todos.overall)
 dev.off()
