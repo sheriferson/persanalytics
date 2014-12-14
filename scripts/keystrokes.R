@@ -67,7 +67,7 @@ daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
 # 888   888    `888'    888    .o  888     d8(  888   888   888  
 # `Y8bod8P'     `8'     `Y8bod8P' d888b    `Y888""8o o888o o888o 
 
-theme_set(theme_minimal(base_size = 14)) # increases base text size a little bit
+theme_set(theme_minimal(base_size = 16)) # increases base text size a little bit
 
 png("plots/polarAll.png", width=900)
 
@@ -203,7 +203,9 @@ png("plots/keysOverTime.png", width=900)
 
 keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) + 
   geom_point(aes(color=machine), alpha=.7, size=.9) + 
-  theme_minimal(base_size=16) +
+  theme_bw(base_size=16) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
   xlab("Days") +
   ylab("Hours of day") +
 #   ylim(rev(range(keys$ytime))) +
