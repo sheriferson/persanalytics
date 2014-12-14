@@ -59,14 +59,17 @@ music$ytime <- as.POSIXct(strptime(music$ytime, format="%H:%M")) # convert to PO
 png("plots/musicAll.png", width = 900)
 
 music.splot <- ggplot(subset(music, type == "s") , aes(x = ISO.time, y = ytime)) +
-  geom_point(size = .75, color = "blue", alpha = .8) +
-  geom_point(data = subset(music, type == "l"), aes(x = ISO.time, y = ytime), color = "red") +
+  geom_point(size = .75, color = "purple", alpha = .8) +
+  geom_point(data = subset(music, type == "l"), aes(x = ISO.time, y = ytime), color = "black") +
   theme_bw(base_size = 16) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_x_datetime(breaks = date_breaks("4 month"), labels = date_format("%Y/%m")) +
-  scale_y_datetime(breaks = date_breaks("1 hour"), labels = date_format("%H:%M")) +
+  scale_x_datetime(breaks = date_breaks("4 month"), 
+                   labels = date_format("%Y/%m")) +
+  scale_y_datetime(breaks = date_breaks("1 hour"), 
+                   labels = date_format("%H:%M"),
+                   expand = c(0,60)) +
   xlab("Time (year/month)") +
   ylab("Time in day") +
   ggtitle("All scrobbled tracks")
@@ -77,13 +80,16 @@ dev.off()
 png("plots/musicScrobbles.png", width = 900)
 
 music.splot <- ggplot(subset(music, type == "s") , aes(x = ISO.time, y = ytime)) +
-  geom_point(size = .75, color = "blue", alpha = .8) +
+  geom_point(size = .75, color = "purple", alpha = .8) +
   theme_bw(base_size = 16) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_x_datetime(breaks = date_breaks("4 month"), labels = date_format("%Y/%m")) +
-  scale_y_datetime(breaks = date_breaks("1 hour"), labels = date_format("%H:%M")) +
+  scale_x_datetime(breaks = date_breaks("4 month"), 
+                   labels = date_format("%Y/%m")) +
+  scale_y_datetime(breaks = date_breaks("1 hour"), 
+                   labels = date_format("%H:%M"),
+                   expand = c(0,60)) +
   xlab("Time (year/month)") +
   ylab("Time in day") +
   ggtitle("All scrobbled tracks")
@@ -91,19 +97,21 @@ music.splot <- ggplot(subset(music, type == "s") , aes(x = ISO.time, y = ytime))
 print(music.splot)
 dev.off()
 
-
 # just loved tracks
 
 png("plots/musicLoved.png", width = 900)
 
 music.lplot <- ggplot(subset(music, type == "l"), aes(x = ISO.time, y = ytime)) +
-  geom_point(color = "red", alpha = .8) +
+  geom_point(color = "red", alpha = .8, size =  1.5) +
   theme_bw(base_size = 16) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_x_datetime(breaks = date_breaks("4 month"), labels = date_format("%Y/%m")) +
-  scale_y_datetime(breaks = date_breaks("1 hour"), labels = date_format("%H:%M")) +
+  scale_x_datetime(breaks = date_breaks("4 month"), 
+                   labels = date_format("%b %Y")) +
+  scale_y_datetime(breaks = date_breaks("1 hour"), 
+                   labels = date_format("%H:%M"),
+                   expand = c(0,60)) +
   xlab("Time (year/month)") +
   ylab("Time in day") +
   ggtitle("Loved tracks")
