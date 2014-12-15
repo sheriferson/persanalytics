@@ -79,19 +79,63 @@ write(datatowrite,
 
 library(ggplot2) # plotting
 library(scales) # for handling time breaks on x axis
+library(lubridate)
 
 todos <- read.csv("data/todos.csv")
 todos$ttime <- as.POSIXct(todos$ttime)
 levels(todos$tlist) <- c("done", "current")
+
+# prepare data for plotting tasks done per day
+todos$year <- year(todos$ttime) # extract year
+todos$month <- month(todos$ttime) # extract month
+todos$day <- mday(todos$ttime) # extract day of the week
+
+todos.done <- subset(todos, tlist == "done") # separate out the completed numbers
+todos.done.perday <- aggregate(tcount ~ day * month * year, data = todos.done, max)
+todos.done.perday$prevTcount <- c(rep(NA,1),head(todos.done.perday$tcount,-1))
+
+todos.done.perday$completedSinceYesterday <- todos.done.perday$tcount - todos.done.perday$prevTcount
+
+todos.done.perday$xday <- paste(todos.done.perday$year, 
+                                todos.done.perday$month, 
+                                todos.done.perday$day, sep="-") # create: yyyy-mm-dd
+todos.done.perday$xday <- as.POSIXct(strptime(todos.done.perday$xday, "%Y-%m-%d")) # convert to POSIX
+
+# plot all over time
+
 png("plots/todos.png", width=900)
 
 todos.overall <- ggplot(todos, aes(x = ttime, y = tcount, group = tlist)) + 
-  geom_line(aes(colour = tlist), size = 2) +
+  geom_line(aes(colour = tlist), size = 1) +
   theme_bw(base_size = 16) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
   xlab("Time") +
   ylab("Count") +
+  ggtitle("Current and done todos over time") +
   scale_color_manual(name = "list", values=c("#00BFC4", "#F8766D")) +
-    scale_x_datetime(breaks=date_breaks("2 weeks"), labels = date_format("%b %d"))
+  scale_x_datetime(breaks=date_breaks("2 weeks"), labels = date_format("%b %d"))
 
 print(todos.overall)
 dev.off()
+
+# completed per day
+
+png("plots/todos_completedPerDay.png", width=900)
+
+todos.completedPerDay <- ggplot(todos.done.perday, aes(x = xday, y = completedSinceYesterday)) + 
+  geom_line(colour="#00BFC4") +
+  geom_smooth(method = "loess") +
+  theme_bw(base_size = 16) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Time") +
+  ylab("Completed todos") +
+  ggtitle("Completed todos per day") +
+  scale_x_datetime(breaks=date_breaks("2 weeks"), labels = date_format("%b %d"))
+
+print(todos.completedPerDay)
+dev.off()
+
