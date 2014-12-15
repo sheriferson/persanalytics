@@ -85,15 +85,19 @@ mess$message <- gsub("<span.+?>", "", mess$message)
 png("plots/chatOverall.png", width = 900)
 
 mess.overall <- ggplot(mess, aes(x = days, y = clock)) + 
-  geom_point(aes(color = account), alpha = .7, size = 1) +
+  geom_point(aes(color = account), alpha = .7, size = 0.8) +
   theme_bw(base_size = 16) +
   theme(legend.position = "none") +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(colour = guide_legend(override.aes = list(size = 5))) +
-  scale_x_datetime(breaks = date_breaks("4 months"), labels = date_format("%Y/%m")) +
-  scale_y_datetime(breaks = date_breaks("1 hour"), labels = date_format("%H:%M")) +
+  scale_x_datetime(breaks = date_breaks("4 months"), 
+                   labels = date_format("%b %Y"),
+                   expand = c(0.03,0)) +
+  scale_y_datetime(breaks = date_breaks("1 hour"), 
+                   labels = date_format("%H:%M"),
+                   expand = c(0,60)) +
 #   scale_color_manual(name = "acc", values=c("#0C3452", "#0B5CA0", "#1A9FF9")) +
   xlab("Days (Year/month)") +
   ylab("Hours of day") +
