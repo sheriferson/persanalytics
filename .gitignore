@@ -1,6 +1,4 @@
 cache/
-
+data/
 .RData
 .Rhistory
-persanalytics.md
-cycling.csv
