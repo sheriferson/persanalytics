@@ -1,21 +1,21 @@
-## What is persanalytics? ##
+## What is persanalytics?
 
-persanalytics is a report and analysis document in which I hope to aggregate all the personal analytics I collect.
+persanalytics is a repo in which I collect and visualize personal analytics.
 
 persanalytics contains (for now):
 
 - keystrokes: frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
-- todos: Records of todo items (current and completed) managed using [t][t] (no plots, yet).
+- todos: Records of todo items (current and completed) managed using [t][].
 - cycling:  data collected using a [Garmin Edge 500][Garmin500].
 - music: [My last.fm][lastfm] scrobbled tracks.
-- instant messaging: chat logs (`xml`).
+- instant messaging: chat logs (`xml` logs collected using [Adium][]).
 
 This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process. My goal is to collect and visualize data that goes back years. Keystrokes, emails, messages/SMS, and any physical activities I can record. See [Stephen Wolfram's personal analytics post][wolfram].
 
 
-## Plots ##
+## Plots
 
-### keystrokes ###
+### keystrokes
 
 ![](plots/polarAll.png)
 
@@ -25,13 +25,16 @@ This is all so I can play around with data and practice plotting and analyzing i
 
 ![](plots/keysOverTime.png)
 
-### todos ###
-
-Nothing too interesting to plot out of those yet, so I'm just plotting the number of current and completed items for now.
+### todos
 
 ![](plots/todos.png)
 
-### cycling ###
+These are completed todos per day.
+The data looks too erratic on its own, so I added a [loess][] [smoothing][] function.
+
+![](plots/todos_completedPerDay.png)
+
+### cycling
 
 My sensors don't measure which gear I'm in, so I created a pseudo "average gear" score:
 
@@ -46,17 +49,17 @@ Average heart rate is a good metric for how intense a training session was.
 
 ![](plots/cyclingGearHR.png)
 
-### music ###
+### music
 
-I am especially happy that I could finally get my music data. There is a clear pattern that I long knew/suspected, but am still impressed I can see in the plots: I love music, but I'm been listening to less of it lately. My expanding podcast subscriptions are largely to blame for that. Why can't I have more than 24 hours a day... 
+I am especially happy that I can finally get my music data. There is a clear pattern that I long knew/suspected, but am still impressed I can see in the plots: I love music, but I've been listening to less of it lately. The main reason is that I'm listening to more and more podcasts. Why can't I have more than 24 hours a day...
 
-![](plots/musicAll.png)
+![](plots/musicScrobbles.png)
 
-Even though the following plot implies that I am "loving" fewer and fewer tracks as time goes on, that is false. I am always finding tracks that I can't stop listening to, I just don't use the "Love this track" feature of last.fm as much as I used to.
+Even though the following plot implies that I am "loving" fewer and fewer tracks as time goes on, I think that's misleading. I am always finding tracks that I can't stop listening to, I just don't use the "Love this track" feature of last.fm as much as I used to.
 
 ![](plots/musicLoved.png)
 
-### instant messaging ###
+### instant messaging
 
 I love [regular expressions](http://regexone.com).
 
@@ -66,49 +69,47 @@ I got around to merging and parsing the logs from my most recent IM account. Acc
 
 <!-- --------------------------------------------- -->
 
-## Technical notes ##
+## Technical notes
 
-Now that we've looked at some sexy plots...
+persanalytics is a collection of [R][] (`.R`) scripts written in [RStudio][]. Each script, when run, will perform all the needed merging, crunching, nip 'n tucking, and plotting needed to arrive at the final plots, and saves them to `peranalytics/plots/`.
 
-persanalytics is a collection of [R][R] (`.R`) scripts written in [RStudio][RStudio]. Each script, when run, will perform all the needed merging, crunching, nip 'n tucking, and plotting needed to arrive at the final plots, and saves them to `peranalytics/plots/`.
+All plots are made using the [ggplot2][ggplot2] library/package because it's awesome.
 
-All plots are made using [ggplot2][ggplot2] because it's awesome.
-
-### keystrokes ###
+### keystrokes
 
 As mentioned above, keystrokes frequencies per min are collected using [minute-agent][minute]. `keystrokes.R` reads the `.log` file and handles the rest.
 
-### todos ###
+### todos
 
 I use [t][t] to manage my todos, and I love it. It is the only task-management system that has ever worked for me.
 
 `t` saves current todos in a file called `tasks.txt` and all completed todos in `.tasks.txt.done`. `todos.R` reads both text files, counts the number of current and completed tasks, and appends it to `data/todos.csv`. It also produces the above plot.
 
-I am using [LaunchControl][LaunchControl] (a GUI for managing [launchd][launchd] jobs on OS X) to run the following command every 3600 seconds:
+I am using [LaunchControl][] (a GUI for managing [launchd][] jobs on OS X) to run the following command every 3600 seconds:
 
 ```bash
 /usr/bin/rscript --vanilla Users/sherif/persanalytics/todos.R
 ```
 
-### music ###
+### music
 
-I [scrobble](http://www.last.fm/help/faq?category=Scrobbling) all [my music](http://www.last.fm/user/thespeckofme). last.fm allows you to request your archive. You receive `.tsv` and `.json` files of your total, loved, banned, bootstrapped, and skipped tracks. `music.R` reads in the `.tsv` file and does what it does.
+I [scrobble](http://www.last.fm/help/faq?category=Scrobbling) all [my music](http://www.last.fm/user/thespeckofme). last.fm allows you to request your listening archive. You receive `.tsv` and `.json` files of your total, loved, banned, bootstrapped, and skipped tracks. `music.R` reads in the `.tsv` file and does what it does.
 
-### instant messaging ###
+### instant messaging
 
 I've been using [Adium](https://www.adium.im) since I first started using a Mac. This was a great decision because it means that even back when I was using Google Chat, I had all my chat logs stored locally. Adium saves chat logs in
 
 `~/Library/Application Support/Adium 2.0/Users/Default/Logs`
 
-However, I keep my Adium 2.0 folder [symlinked](https://en.wikipedia.org/wiki/Symbolic_link) on Dropbox, which means that all my settings and chat logs are keps in sync between my two computers. It works surprisingly well.
+However, I keep my Adium 2.0 folder [symlinked](https://en.wikipedia.org/wiki/Symbolic_link) on Dropbox, which means that all my settings and chat logs are kept in sync between my two computers. It works surprisingly well.
 
-Within `Logs`, there is a folder per account, within those there is a folder per contact, within those a folder (with an extension `.chatlog`) per conversation, and within those `.xml` files.
+Within `Logs`, there is a folder per account. Within those there is a folder per contact. Within those a folder (with an extension `.chatlog`) per conversation, and within _those_ `.xml` files with the content of the conversations.
 
 `IM.R` executes a bash command to `cat` all of those scattered `.xml` files into one `mergedIM.xml` file, which it then reads in and does some regex stuff to split it into the interesting components.
 
-If there is an easy way to parse `xml` using R, I don't know it.
+If there is an easier way to parse `xml` using R, I don't know it.
 
-### Data on the todo list ###
+### Data on the todo list
 
 The following data is being collected, I just need to figure out how to obtain/parse them.
 
@@ -121,8 +122,12 @@ The following data is being collected, I just need to figure out how to obtain/p
 [t]: https://github.com/sjl/t
 
 [Garmin500]: https://buy.garmin.com/en-US/US/into-sports/cycling/edge-500/prod36728.html
+[Adium]: https://www.adium.im
 
 [wolfram]: http://blog.stephenwolfram.com/2012/03/the-personal-analytics-of-my-life/
+
+[loess]: http://en.wikipedia.org/wiki/Local_regression
+[smoothing]: http://docs.ggplot2.org/current/geom_smooth.html
 
 [R]: https://en.wikipedia.org/wiki/R_Statistics
 [RStudio]: http://www.rstudio.com
