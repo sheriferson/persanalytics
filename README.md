@@ -4,13 +4,17 @@ persanalytics is a repo in which I collect and visualize personal analytics.
 
 persanalytics contains (for now):
 
-- keystrokes: frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
-- todos: Records of todo items (current and completed) managed using [t][].
-- cycling:  data collected using a [Garmin Edge 500][Garmin500].
-- music: [My last.fm][lastfm] scrobbled tracks.
-- instant messaging: chat logs (`xml` logs collected using [Adium][]).
+- **keystroke** frequency information collected using [minute-agent][minute] ([my modified fork][minute-sh]).
+- **todos** (current and completed) managed using [t][].
+- **cycling** data collected using a [Garmin Edge 500][Garmin500].
+- **music** tracks scrobbled on [last.fm][lastfm].
+- **instant messaging** chat logs (`xml` logs collected using [Adium][]).
 
-This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process. My goal is to collect and visualize data that goes back years. Keystrokes, emails, messages/SMS, and any physical activities I can record. See [Stephen Wolfram's personal analytics post][wolfram].
+This is all so I can play around with data and practice plotting and analyzing it, and get some insight into changes over time in the process. My goal is to collect and visualize data that goes back years. Keystrokes, emails, messages/SMS, and any physical activities I can record.
+
+See also:
+
+- [Stephen Wolfram's personal analytics post][wolfram].
 
 
 ## Plots
@@ -30,7 +34,7 @@ This is all so I can play around with data and practice plotting and analyzing i
 ![](plots/todos.png)
 
 These are completed todos per day.
-The data looks too erratic on its own, so I added a [loess][] [smoothing][] function.
+The data look too erratic on their own, so I added a [loess][] [smoothing][] function.
 
 ![](plots/todos_completedPerDay.png)
 
@@ -51,13 +55,17 @@ Average heart rate is a good metric for how intense a training session was.
 
 ### music
 
-I am especially happy that I can finally get my music data. There is a clear pattern that I long knew/suspected, but am still impressed I can see in the plots: I love music, but I've been listening to less of it lately. The main reason is that I'm listening to more and more podcasts. Why can't I have more than 24 hours a day...
+I am especially happy that I can finally get my music data. There is a clear pattern that I long knew/suspected, but am still impressed I can see in the plots: I love music, but I've been listening to less of it lately. The main reason is that I'm listening to more and more podcasts.
 
 ![](plots/musicScrobbles.png)
 
 Even though the following plot implies that I am "loving" fewer and fewer tracks as time goes on, I think that's misleading. I am always finding tracks that I can't stop listening to, I just don't use the "Love this track" feature of last.fm as much as I used to.
 
 ![](plots/musicLoved.png)
+
+![](plots/musicTotalPerDay.png)
+
+![](plots/musicByDayOfWeek.png)
 
 ### instant messaging
 
@@ -136,6 +144,6 @@ The following data is being collected, I just need to figure out how to obtain/p
 [ggplot2]: http://docs.ggplot2.org/current/
 
 [LaunchControl]: http://www.soma-zone.com/LaunchControl/
-[launchd]: http://launchd.info)
+[launchd]: http://launchd.info
 
 [lastfm]: http://www.last.fm/user/thespeckofme
