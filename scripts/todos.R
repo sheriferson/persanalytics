@@ -67,19 +67,20 @@ write(datatowrite,
       file="data/todos.csv",
       append=TRUE)
 
-#            oooo                .   
-#            `888              .o8   
-# oo.ooooo.   888   .ooooo.  .o888oo 
-#  888' `88b  888  d88' `88b   888   
-#  888   888  888  888   888   888   
-#  888   888  888  888   888   888 . 
-#  888bod8P' o888o `Y8bod8P'   "888" 
-#  888                               
-# o888o                              
+#            oooo                .                                            
+#            `888              .o8                                            
+# oo.ooooo.   888   .ooooo.  .o888oo oo.ooooo.  oooo d8b  .ooooo.  oo.ooooo.  
+#  888' `88b  888  d88' `88b   888    888' `88b `888""8P d88' `88b  888' `88b 
+#  888   888  888  888   888   888    888   888  888     888ooo888  888   888 
+#  888   888  888  888   888   888 .  888   888  888     888    .o  888   888 
+#  888bod8P' o888o `Y8bod8P'   "888"  888bod8P' d888b    `Y8bod8P'  888bod8P' 
+#  888                                888                           888       
+# o888o                              o888o                         o888o      
 
 library(ggplot2) # plotting
 library(scales) # for handling time breaks on x axis
 library(lubridate)
+library(zoo)    # for handling rolling mean calculation
 
 todos <- read.csv("data/todos.csv")
 todos$ttime <- as.POSIXct(todos$ttime)
@@ -100,6 +101,40 @@ todos.done.perday$xday <- paste(todos.done.perday$year,
                                 todos.done.perday$month, 
                                 todos.done.perday$day, sep="-") # create: yyyy-mm-dd
 todos.done.perday$xday <- as.POSIXct(strptime(todos.done.perday$xday, "%Y-%m-%d")) # convert to POSIX
+
+### completed per day with a rolling mean
+# the above plot doesn't look very informative. the loess smooth line is a bit informative
+# but the line plot is not.
+# let's try using a rolling mean
+
+# there are two problems to handle:
+# 1. the first value of completedSinceYesterday is NA. This throws off rollmean
+# 2. the number of values returned by rollmean is the number of values given
+#    to it minus the size of the window for the rolling mean minus 1
+#
+# current proposed solution is to set the size of the rolling average window
+# to a variable x,
+# produce the rolling average vector
+# cut down the data frame to nrows - x - 1
+# add the rolling average vector which should now match the dataframe in length
+# plot
+
+window = 10
+rollingTodos <- todos.done.perday[-1,]
+rollingCompleted <- rollmean(rollingTodos$completedSinceYesterday, window)
+
+rollingTodos <- rollingTodos[-seq(window-1),]
+rollingTodos$rolled <- rollingCompleted
+
+#            oooo                .   
+#            `888              .o8   
+# oo.ooooo.   888   .ooooo.  .o888oo 
+#  888' `88b  888  d88' `88b   888   
+#  888   888  888  888   888   888   
+#  888   888  888  888   888   888 . 
+#  888bod8P' o888o `Y8bod8P'   "888" 
+#  888                               
+# o888o                              
 
 # plot all over time
 
@@ -134,8 +169,30 @@ todos.completedPerDay <- ggplot(todos.done.perday, aes(x = xday, y = completedSi
   xlab("Time") +
   ylab("Completed todos") +
   ggtitle("Completed todos per day") +
-  scale_x_datetime(breaks=date_breaks("2 weeks"), labels = date_format("%b %d"))
+  scale_x_datetime(breaks=date_breaks("2 weeks"), 
+                   labels = date_format("%b %d")) +
+  scale_y_continuous(breaks = 1:max(todos.done.perday$completedSinceYesterday, na.rm = T))
 
 print(todos.completedPerDay)
 dev.off()
 
+# completed per day rolled edition
+
+png("plots/todos_completedPerDay_rolled.png", width=900)
+
+todos.RolledCompletedPerDay <- ggplot(rollingTodos, aes(x = xday, y = rolled)) + 
+  geom_line(colour="#00BFC4") +
+  geom_smooth(method = "loess") +
+  theme_bw(base_size = 16) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)) +
+  xlab("Time") +
+  ylab("Completed todos") +
+  ggtitle("Completed todos per day (rolling mean with 10-day window)") +
+  scale_x_datetime(breaks=date_breaks("2 weeks"), 
+                   labels = date_format("%b %d")) +
+  scale_y_continuous(breaks = 1:max(todos.done.perday$completedSinceYesterday, na.rm = T))
+
+print(todos.RolledCompletedPerDay)
+dev.off()

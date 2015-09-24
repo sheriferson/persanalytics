@@ -38,6 +38,14 @@ The data look too erratic on their own, so I added a [loess][] [smoothing][] fun
 
 ![](plots/todos_completedPerDay.png)
 
+After a while, the above plot loses its usefulness. The lines are pushed against each other and, aside from the loess smoothing overlay, the viewer doesn't get any information from the line plot itself.
+
+This is a good time to use a simple [rolling mean](https://en.wikipedia.org/wiki/Moving_average "Moving average - Wikipedia, the free encyclopedia").
+
+![](plots/todos_completedPerDay_rolled.png)
+
+That's better.
+
 ### cycling
 
 My sensors don't measure which gear I'm in, so I created a pseudo "average gear" score:
