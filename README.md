@@ -23,10 +23,6 @@ See also:
 
 ![](plots/polarAll.png)
 
-![](plots/polarSplit.png)
-
-![](plots/polarSplit2014.png)
-
 ![](plots/keysOverTime.png)
 
 ### todos
