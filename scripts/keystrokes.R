@@ -210,10 +210,10 @@ keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) +
   ylab("Hours of day") +
 #   ylim(rev(range(keys$ytime))) +
   scale_y_datetime(breaks=date_breaks("1 hour"),
-                   labels = date_format("%H:%M"),
+                   labels = date_format("%H:%M", tz="America/Toronto"),
                    limits = range(keys$ytime),
                    expand = c(0,60)) +
-  scale_x_datetime(breaks=date_breaks("1 month"), 
+  scale_x_datetime(breaks=date_breaks("1 month"),
                    labels = date_format("%b %Y"),
                    limits = range(keys$xday),
                    expand = c(0.03,0)
