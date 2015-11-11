@@ -25,6 +25,8 @@ See also:
 
 ![](plots/keysOverTime.png)
 
+![](plots/keysOverTime_7days_II.png)
+
 ### todos
 
 ![](plots/todos.png)

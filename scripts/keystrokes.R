@@ -23,6 +23,7 @@ setwd("~/persanalytics/")
 library(lubridate) # to extract components of time/date easily
 library(ggplot2)  # for plotting
 library(grid) # to use with ggplot for putting plots next to each other
+library(gridExtra) # to use for aligning two plots for last 7 days
 library(scales) # specific use in labelling axes in plotting
 
 airspace <- read.csv("~/log/keystrokes.log") # home machine
@@ -58,6 +59,15 @@ keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d")) # convert to POSIX
 keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M")) # convert to POSIX
 
 daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday") # create vector of day names
+
+# give me a dataset with only the last 7 days and today
+unixweek <- 604800
+cutoff <- as.POSIXct(max(keys$minute) - unixweek, origin = "1970-01-01")
+cutoff <- as.numeric(strptime(cutoff, format = "%Y-%m-%d"))
+keys7 <- subset(keys, minute > cutoff)
+
+# get keystrokes totals for totals bar plot in last 7 days
+k7 <- aggregate(strokes ~ xday, data = keys7, FUN = sum)
 
 #                                                    oooo  oooo  
 #                                                    `888  `888  
@@ -135,5 +145,98 @@ keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) +
   ggtitle("Distribution of keystrokes by machine throughout the day")
 
 print(keys.hoursAll)
+
+dev.off() # close device/file
+#   ooooooooo          .o8                                 
+#  d"""""""8'         "888                                 
+#        .8'      .oooo888   .oooo.   oooo    ooo  .oooo.o 
+#       .8'      d88' `888  `P  )88b   `88.  .8'  d88(  "8 
+#      .8'       888   888   .oP"888    `88..8'   `"Y88b.  
+#     .8'        888   888  d8(  888     `888'    o.  )88b 
+#    .8'         `Y8bod88P" `Y888""8o     .8'     8""888P' 
+#                                     .o..P'               
+#                                    `Y8P'                
+
+png("plots/keysOverTime_7days.png", width=700)
+
+keys.hoursAll7 <- ggplot(keys7, aes(x=xday, y=ytime)) + 
+    geom_point(aes(color=machine, size=strokes), alpha=.4) + 
+    scale_size(range = c(2, 12)) +
+    theme_bw(base_size=16) +
+    # theme(panel.grid.major = element_blank(),
+          # panel.grid.minor = element_blank()) +
+    xlab("Days") +
+    ylab("Hours of day") +
+    scale_y_datetime(breaks=date_breaks("1 hour"),
+                     labels = date_format("%H:%M", tz="America/Toronto"),
+                     limits = range(keys7$ytime),
+                     expand = c(0,60)) +
+    scale_x_datetime(breaks=date_breaks("1 day"), 
+                     labels = date_format("%d %b, %Y"),
+                     limits = range(keys7$xday),
+                     expand = c(0.03,0)
+    ) +
+    theme(axis.text.x = element_text(angle = 25, hjust = 1)) +
+    guides(colour = guide_legend(override.aes = list(size = 5))) +
+    scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
+    ggtitle("keystrokes / machine (last 7 days)")
+
+print(keys.hoursAll7)
+
+dev.off() # close device/file
+
+#  ooooooooo          .o8                                    ooooo ooooo 
+# d"""""""8'         "888                                    `888' `888' 
+#       .8'      .oooo888   .oooo.   oooo    ooo  .oooo.o     888   888  
+#      .8'      d88' `888  `P  )88b   `88.  .8'  d88(  "8     888   888  
+#     .8'       888   888   .oP"888    `88..8'   `"Y88b.      888   888  
+#    .8'        888   888  d8(  888     `888'    o.  )88b     888   888  
+#   .8'         `Y8bod88P" `Y888""8o     .8'     8""888P'    o888o o888o 
+#                                    .o..P'                              
+#                                    `Y8P'                               
+
+png("plots/keysOverTime_7days_II.png", width=450)
+
+keys.barHours <- ggplot(keys7, aes(x=xday, y=ytime)) + 
+    geom_point(aes(color = machine, size = strokes), alpha = .4) +
+    scale_size(range = c(2, 12)) +
+    theme_bw() + 
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          legend.position = "none",
+          panel.grid.minor.x = element_blank(),
+          panel.grid.major = element_blank(),
+          plot.margin = unit(c(1,5,-32,3),units="points")) +
+    xlab("") +
+    ylab("Time of day") +
+    scale_x_datetime(breaks=date_breaks("1 day"),
+                     expand = c(.1 ,60)
+                     ) +
+    scale_y_datetime(breaks = date_breaks("2 hours"),
+                     labels = date_format("%H:%M", tz = "America/Toronto"),
+                     limits = range(keys7$ytime)
+                    ) +
+    guides(colour = guide_legend(override.aes = list(size = 5))) +
+    scale_color_manual(name = "machine", values = c("#00BFC4", "#F8766D")) +
+    ggtitle("keystrokes / machine (last 7 days)")
+
+keys.barTotals <- ggplot(k7, aes(x = xday, y = strokes)) + 
+    geom_bar(aes(color = strokes, fill = strokes), stat = "identity") +
+    theme_bw() +
+    theme(plot.margin = unit(c(0,5,1,1),units="points"),
+          panel.grid.minor = element_blank(),
+          panel.grid.major = element_blank(),
+          legend.position = "none") +
+    scale_x_datetime(breaks=date_breaks("1 day"), 
+                     labels = date_format("%d %b"),
+                     limits = range(keys7$xday),
+                     expand = c(.1 ,60)
+                    ) +
+    scale_y_continuous(limits = c(0, max(k7$strokes) + max(k7$strokes) * .03)) +
+    # scale_fill_gradient(low = "#00BFC4", high = "#F8766D") +
+    xlab("Day") +
+    ylab("Keystrokes")
+
+grid.arrange(keys.barHours, keys.barTotals, heights = c(4/6, 2/6))
 
 dev.off() # close device/file
