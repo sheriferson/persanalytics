@@ -181,7 +181,7 @@ dev.off()
 png("plots/todos_completedPerDay_rolled.png", width=900)
 
 todos.RolledCompletedPerDay <- ggplot(rollingTodos, aes(x = xday, y = rolled)) + 
-  geom_line(colour="#00BFC4") +
+  geom_line(colour="#8FC3Eb", size = .75) +
   geom_smooth(method = "loess") +
   theme_bw(base_size = 16) +
   theme(panel.grid.major = element_blank(),
