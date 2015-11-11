@@ -44,16 +44,16 @@ levels(keys$machine) <- c("Airspace", "Shuttle") # label machines
 # There is probably redundancy that can be cleaned up in the block.
 # It was written in a bit of a rush to try and get a few things working
 
-keys$rtime <- as.POSIXlt(keys$minute, tz="EST", origin="1970-01-01") # convert numerical POSIX (1356747240) to readable data
+keys$rtime <- as.POSIXlt(keys$minute, tz = "EST", origin = "1970-01-01") # convert numerical POSIX (1356747240) to readable data
 keys$year <- year(keys$rtime) # extract year
 keys$month <- month(keys$rtime) # extract month
-keys$day <- wday(keys$rtime, label=TRUE) # extract day of the week
+keys$day <- wday(keys$rtime, label = TRUE) # extract day of the week
 keys$mday <- mday(keys$rtime) # extract day of the month
 keys$hour <- hour(keys$rtime) # extract hour component
 keys$min <- minute(keys$rtime) # extract minute component
 
-keys$xday <- paste(keys$year, keys$month, keys$mday, sep="-") # create: yyyy-mm-dd
-keys$ytime <- paste(keys$hour, keys$min, sep=":") # create hh:mm
+keys$xday <- paste(keys$year, keys$month, keys$mday, sep = "-") # create: yyyy-mm-dd
+keys$ytime <- paste(keys$hour, keys$min, sep = ":") # create hh:mm
 
 keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d")) # convert to POSIX
 keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M")) # convert to POSIX
@@ -79,10 +79,10 @@ k7 <- aggregate(strokes ~ xday, data = keys7, FUN = sum)
 
 theme_set(theme_minimal(base_size = 16)) # increases base text size a little bit
 
-png("plots/polarAll.png", width=900)
+png("plots/polarAll.png", width = 900)
 
-keys.polarAll1 <- ggplot(keys, aes(x=hour)) +
-  geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(0, 24), width=2) +
+keys.polarAll1 <- ggplot(keys, aes(x = hour)) +
+  geom_histogram(aes(y = ..count.., fill = ..count..), breaks = seq(0, 24), width = 2) +
   coord_polar(start = 0) +
   ylab("No. of mins per hour") +
   xlab("Hours (24)") +
@@ -93,8 +93,8 @@ keys.polarAll1 <- ggplot(keys, aes(x=hour)) +
   ggtitle("Minutes with keystrokes /hour\n (all time)"
   )
 
-keys.polarAll2 <- ggplot(keys, aes(x=day)) +
-  geom_histogram(aes(y = ..count.., fill= ..count..), breaks = seq(1, 8), width=1) +
+keys.polarAll2 <- ggplot(keys, aes(x = day)) +
+  geom_histogram(aes(y = ..count.., fill = ..count..), breaks = seq(1, 8), width = 1) +
   coord_polar(start = 1) +
   ylab("No. of mins per hour") +
   xlab("Days/week") +
@@ -119,21 +119,20 @@ dev.off() # close device/file
 #  888   888  888   888  888   888   888     o.  )88b 
 # o888o o888o `Y8bod8P'  `V88V"V8P' d888b    8""888P' 
 
-png("plots/keysOverTime.png", width=900)
+png("plots/keysOverTime.png", width = 900)
 
-keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) + 
-  geom_point(aes(color=machine), alpha=.7, size=.9) + 
-  theme_bw(base_size=16) +
+keys.hoursAll <- ggplot(keys, aes(x = xday, y = ytime)) + 
+  geom_point(aes(color = machine), alpha = .7, size = .9) + 
+  theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
   xlab("Days") +
   ylab("Hours of day") +
-#   ylim(rev(range(keys$ytime))) +
-  scale_y_datetime(breaks=date_breaks("1 hour"),
-                   labels = date_format("%H:%M", tz="America/Toronto"),
+  scale_y_datetime(breaks = date_breaks("1 hour"),
+                   labels = date_format("%H:%M", tz = "America/Toronto"),
                    limits = range(keys$ytime),
                    expand = c(0,60)) +
-  scale_x_datetime(breaks=date_breaks("1 month"),
+  scale_x_datetime(breaks = date_breaks("1 month"),
                    labels = date_format("%b %Y"),
                    limits = range(keys$xday),
                    expand = c(0.03,0)
@@ -141,7 +140,7 @@ keys.hoursAll <- ggplot(keys, aes(x=xday, y=ytime)) +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   guides(colour = guide_legend(override.aes = list(size = 5))) +
-  scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
+  scale_color_manual(name = "machine", values = c("#00BFC4", "#F8766D")) +
   ggtitle("Distribution of keystrokes by machine throughout the day")
 
 print(keys.hoursAll)
@@ -157,28 +156,28 @@ dev.off() # close device/file
 #                                     .o..P'               
 #                                    `Y8P'                
 
-png("plots/keysOverTime_7days.png", width=700)
+png("plots/keysOverTime_7days.png", width = 700)
 
-keys.hoursAll7 <- ggplot(keys7, aes(x=xday, y=ytime)) + 
-    geom_point(aes(color=machine, size=strokes), alpha=.4) + 
+keys.hoursAll7 <- ggplot(keys7, aes(x = xday, y = ytime)) + 
+    geom_point(aes(color = machine, size = strokes), alpha = .4) + 
     scale_size(range = c(2, 12)) +
-    theme_bw(base_size=16) +
-    # theme(panel.grid.major = element_blank(),
-          # panel.grid.minor = element_blank()) +
+    theme_bw() +
+    theme(panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()) +
     xlab("Days") +
     ylab("Hours of day") +
-    scale_y_datetime(breaks=date_breaks("1 hour"),
-                     labels = date_format("%H:%M", tz="America/Toronto"),
+    scale_y_datetime(breaks = date_breaks("1 hour"),
+                     labels = date_format("%H:%M", tz = "America/Toronto"),
                      limits = range(keys7$ytime),
                      expand = c(0,60)) +
-    scale_x_datetime(breaks=date_breaks("1 day"), 
+    scale_x_datetime(breaks = date_breaks("1 day"), 
                      labels = date_format("%d %b, %Y"),
                      limits = range(keys7$xday),
                      expand = c(0.03,0)
     ) +
     theme(axis.text.x = element_text(angle = 25, hjust = 1)) +
     guides(colour = guide_legend(override.aes = list(size = 5))) +
-    scale_color_manual(name = "machine", values=c("#00BFC4", "#F8766D")) +
+    scale_color_manual(name = "machine", values = c("#00BFC4", "#F8766D")) +
     ggtitle("keystrokes / machine (last 7 days)")
 
 print(keys.hoursAll7)
@@ -195,9 +194,9 @@ dev.off() # close device/file
 #                                    .o..P'                              
 #                                    `Y8P'                               
 
-png("plots/keysOverTime_7days_II.png", width=450)
+png("plots/keysOverTime_7days_II.png", width = 450)
 
-keys.barHours <- ggplot(keys7, aes(x=xday, y=ytime)) + 
+keys.barHours <- ggplot(keys7, aes(x = xday, y = ytime)) + 
     geom_point(aes(color = machine, size = strokes), alpha = .4) +
     scale_size(range = c(2, 12)) +
     theme_bw() + 
@@ -206,10 +205,10 @@ keys.barHours <- ggplot(keys7, aes(x=xday, y=ytime)) +
           legend.position = "none",
           panel.grid.minor.x = element_blank(),
           panel.grid.major = element_blank(),
-          plot.margin = unit(c(1,5,-32,3),units="points")) +
+          plot.margin = unit(c(1,5,-32,3), units = "points")) +
     xlab("") +
     ylab("Time of day") +
-    scale_x_datetime(breaks=date_breaks("1 day"),
+    scale_x_datetime(breaks = date_breaks("1 day"),
                      expand = c(.1 ,60)
                      ) +
     scale_y_datetime(breaks = date_breaks("2 hours"),
@@ -223,11 +222,11 @@ keys.barHours <- ggplot(keys7, aes(x=xday, y=ytime)) +
 keys.barTotals <- ggplot(k7, aes(x = xday, y = strokes)) + 
     geom_bar(aes(color = strokes, fill = strokes), stat = "identity") +
     theme_bw() +
-    theme(plot.margin = unit(c(0,5,1,1),units="points"),
+    theme(plot.margin = unit(c(0,5,1,1),units = "points"),
           panel.grid.minor = element_blank(),
           panel.grid.major = element_blank(),
           legend.position = "none") +
-    scale_x_datetime(breaks=date_breaks("1 day"), 
+    scale_x_datetime(breaks = date_breaks("1 day"), 
                      labels = date_format("%d %b"),
                      limits = range(keys7$xday),
                      expand = c(.1 ,60)
