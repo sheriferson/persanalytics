@@ -189,3 +189,25 @@ music.lplot <- ggplot(music.perday, aes(x = ISO.time, y = play)) +
 
 print(music.lplot)
 dev.off()
+
+## no axes
+png("plots/musicTotalPerDayNoAxes.png", width = 900)
+
+music.lplotNoAxes <- ggplot(music.perday, aes(x = ISO.time, y = play)) +
+  geom_line(color = "red", alpha = .8, size =  .5) +
+  geom_smooth() +
+  theme_bw(base_size = 16) +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line=element_blank(),axis.text.x=element_blank(),
+        axis.text.y=element_blank(),axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),legend.position="none",
+        panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),plot.background=element_blank()) +
+  scale_x_datetime(breaks = date_breaks("4 month"), 
+                   labels = date_format("%b %Y")) +
+  xlab("Time (year/month)") +
+  ylab("Plays") 
+print(music.lplotNoAxes)
+dev.off()
