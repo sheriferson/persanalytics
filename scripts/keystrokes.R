@@ -24,6 +24,7 @@ library(lubridate) # to extract components of time/date easily
 library(ggplot2)  # for plotting
 library(grid) # to use with ggplot for putting plots next to each other
 library(gridExtra) # to use for aligning two plots for last 7 days
+library(RColorBrewer) # to choose cool colours for plots
 library(scales) # specific use in labelling axes in plotting
 
 airspace <- read.csv("~/log/keystrokes.log") # home machine
@@ -67,7 +68,7 @@ cutoff <- as.numeric(strptime(cutoff, format = "%Y-%m-%d"))
 keys7 <- subset(keys, minute > cutoff)
 
 # get keystrokes totals for totals bar plot in last 7 days
-k7 <- aggregate(strokes ~ xday, data = keys7, FUN = sum)
+k7 <- aggregate(strokes ~ xday * machine, data = keys7, FUN = sum)
 
 #                                                    oooo  oooo  
 #                                                    `888  `888  
@@ -78,6 +79,7 @@ k7 <- aggregate(strokes ~ xday, data = keys7, FUN = sum)
 # `Y8bod8P'     `8'     `Y8bod8P' d888b    `Y888""8o o888o o888o 
 
 theme_set(theme_minimal(base_size = 16)) # increases base text size a little bit
+machineColors <- rev(brewer.pal(3, "Set1")[0:2])
 
 png("plots/polarAll.png", width = 900)
 
@@ -194,7 +196,7 @@ dev.off() # close device/file
 #                                    .o..P'                              
 #                                    `Y8P'                               
 
-png("plots/keysOverTime_7days_II.png", width = 450)
+png("plots/keysOverTime_7days_II.png", width = 500, height = 750)
 
 keys.barHours <- ggplot(keys7, aes(x = xday, y = ytime)) + 
     geom_point(aes(color = machine, size = strokes), alpha = .4) +
@@ -216,22 +218,23 @@ keys.barHours <- ggplot(keys7, aes(x = xday, y = ytime)) +
                      limits = range(keys7$ytime)
                     ) +
     guides(colour = guide_legend(override.aes = list(size = 5))) +
-    scale_color_manual(name = "machine", values = c("#00BFC4", "#F8766D")) +
+    scale_color_manual(name = "machine", values = machineColors) +
     ggtitle("keystrokes / machine (last 7 days)")
 
 keys.barTotals <- ggplot(k7, aes(x = xday, y = strokes)) + 
-    geom_bar(aes(color = strokes, fill = strokes), stat = "identity") +
+    geom_bar(aes(color = machine, fill = machine), stat = "identity") +
     theme_bw() +
     theme(plot.margin = unit(c(0,5,1,1),units = "points"),
           panel.grid.minor = element_blank(),
           panel.grid.major = element_blank(),
-          legend.position = "none") +
+          legend.position = "bottom") +
     scale_x_datetime(breaks = date_breaks("1 day"), 
-                     labels = date_format("%d %b"),
+                     labels = date_format("%a%n%b %d"), # "Wed\n Nov 11
                      limits = range(keys7$xday),
                      expand = c(.1 ,60)
                     ) +
-    scale_y_continuous(limits = c(0, max(k7$strokes) + max(k7$strokes) * .03)) +
+    scale_color_manual(name = "machine", values = machineColors) +
+    scale_fill_manual(name = "machine", values = machineColors) +
     # scale_fill_gradient(low = "#00BFC4", high = "#F8766D") +
     xlab("Day") +
     ylab("Keystrokes")
