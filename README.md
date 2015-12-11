@@ -21,11 +21,11 @@ See also:
 
 ### keystrokes
 
-![](plots/polarAll.png)
+![Polar plot](plots/polarAll.png)
 
-![](plots/keysOverTime.png)
+![Keystrokes time series](plots/keysOverTime.png)
 
-![](plots/keysOverTime_7days.png)
+![Keystrokes time series for last 7 days](plots/keysOverTime_7days.png)
 
 ### todos
 
@@ -127,7 +127,7 @@ If there is an easier way to parse `xml` using R, I don't know it.
 
 The following data is being collected, I just need to figure out how to obtain/parse them.
 
-- Email (incoming and outgoing).
+- [x] Email (incoming and outgoing). (See [Visualize.mmBundle](https://github.com/sheriferson/Visualize.mmBundle)).
 
 
 [minute]: https://github.com/tmcw/minute-agent
