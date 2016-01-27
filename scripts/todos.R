@@ -100,6 +100,30 @@ todos.done.perday$completedSinceYesterday <- todos.done.perday$tcount - todos.do
 todos.done.perday$xday <- paste(todos.done.perday$year, 
                                 todos.done.perday$month, 
                                 todos.done.perday$day, sep="-") # create: yyyy-mm-dd
+todos.done.perday$xday <- as.Date(todos.done.perday$xday)
+
+# set an outlier cutoff so that one perhaps erroneous or weird day
+# doesn't throw the plot off
+outlierCutoff <- mean(todos.done.perday$completedSinceYesterday, na.rm = TRUE) + (5 * sd(todos.done.perday$completedSinceYesterday, na.rm = TRUE))
+
+## todos.done.perday only includes rows for days on which I completed tasks
+## which means that plots will be skewed because of missing days
+## Need to fill in rows for missing days
+
+alldays <- seq.Date(from = as.Date(min(todos.done.perday$xday)), 
+                    to = as.Date(max(todos.done.perday$xday)), 
+                    "days")
+
+alldays <- data.frame(alldays)
+colnames(alldays) <- c("xday")
+
+todos.done.perday <- merge(alldays, todos.done.perday,
+                           by.x = "xday",
+                           by.y = "xday",
+                           all.x = TRUE)
+
+missingDays <- is.na(todos.done.perday$completedSinceYesterday)
+todos.done.perday$completedSinceYesterday[missingDays] <- 0
 todos.done.perday$xday <- as.POSIXct(strptime(todos.done.perday$xday, "%Y-%m-%d")) # convert to POSIX
 
 ### completed per day with a rolling mean
@@ -150,7 +174,7 @@ todos.overall <- ggplot(todos, aes(x = ttime, y = tcount, group = tlist)) +
   ylab("Count") +
   ggtitle("Current and done todos over time") +
   scale_color_manual(name = "list", values=c("#00BFC4", "#F8766D")) +
-  scale_x_datetime(breaks=date_breaks("2 weeks"), labels = date_format("%b %d"))
+  scale_x_datetime(breaks=date_breaks("1 month"), labels = date_format("%Y %b"))
 
 print(todos.overall)
 dev.off()
@@ -169,9 +193,10 @@ todos.completedPerDay <- ggplot(todos.done.perday, aes(x = xday, y = completedSi
   xlab("Time") +
   ylab("Completed todos") +
   ggtitle("Completed todos per day") +
-  scale_x_datetime(breaks=date_breaks("2 weeks"), 
-                   labels = date_format("%b %d")) +
-  scale_y_continuous(breaks = 1:max(todos.done.perday$completedSinceYesterday, na.rm = T))
+  scale_x_datetime(breaks=date_breaks("1 month"), 
+                   labels = date_format("%b %Y")) +
+  scale_y_continuous(breaks = 1:outlierCutoff) +
+  coord_cartesian(ylim = c(1, outlierCutoff))
 
 print(todos.completedPerDay)
 dev.off()
@@ -190,8 +215,8 @@ todos.RolledCompletedPerDay <- ggplot(rollingTodos, aes(x = xday, y = rolled)) +
   xlab("Time") +
   ylab("Completed todos") +
   ggtitle("Completed todos per day (rolling mean with 10-day window)") +
-  scale_x_datetime(breaks=date_breaks("2 weeks"), 
-                   labels = date_format("%b %d")) +
+  scale_x_datetime(breaks=date_breaks("1 month"), 
+                   labels = date_format("%Y %b")) +
   scale_y_continuous(breaks = 1:max(todos.done.perday$completedSinceYesterday, na.rm = T))
 
 print(todos.RolledCompletedPerDay)
