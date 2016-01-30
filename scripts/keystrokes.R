@@ -84,7 +84,7 @@ machineColors <- rev(brewer.pal(3, "Set1")[1:2])
 png("plots/polarAll.png", width = 900)
 
 keys.polarAll1 <- ggplot(keys, aes(x = hour)) +
-    geom_histogram(aes(y = ..count.., fill = ..count..), breaks = seq(0, 24), width = 2) +
+    geom_bar(aes(y = ..count.., fill = ..count..)) +
     coord_polar(start = 0) +
     ylab("No. of mins per hour") +
     xlab("Hours (24)") +
@@ -96,7 +96,7 @@ keys.polarAll1 <- ggplot(keys, aes(x = hour)) +
     )
 
 keys.polarAll2 <- ggplot(keys, aes(x = day)) +
-    geom_histogram(aes(y = ..count.., fill = ..count..), breaks = seq(1, 8), width = 1) +
+    geom_bar(aes(y = ..count.., fill = ..count..)) +
     coord_polar(start = 1) +
     ylab("No. of mins per hour") +
     xlab("Days/week") +
@@ -125,7 +125,7 @@ dev.off() # close device/file
 png("plots/keysOverTime.png", width = 900)
 
 keys.hoursAll <- ggplot(keys, aes(x = xday, y = ytime)) + 
-  geom_point(aes(color = machine), alpha = .7, size = .9) + 
+  geom_point(aes(color = machine), alpha = .5, size = .25) + 
   theme_bw() +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank()) +
@@ -172,7 +172,7 @@ dev.off()
 #                                     .o..P'               
 #                                    `Y8P'                
 
-png("plots/keysOverTime_7days_II.png", width = 500, height = 750)
+png("plots/keysOverTime_7days.png", width = 500, height = 750)
 
 keys.barHours <- ggplot(keys7, aes(x = xday, y = ytime)) + 
     geom_point(aes(color = machine, size = strokes), alpha = .4) +
@@ -187,7 +187,7 @@ keys.barHours <- ggplot(keys7, aes(x = xday, y = ytime)) +
     xlab("") +
     ylab("Time of day") +
     scale_x_datetime(breaks = date_breaks("1 day"),
-                     expand = c(.1 ,60)
+                     expand = c(.125, 45)
                      ) +
     scale_y_datetime(breaks = date_breaks("2 hours"),
                      labels = date_format("%H:%M", tz = "America/Toronto"),
@@ -205,9 +205,7 @@ keys.barTotals <- ggplot(k7, aes(x = xday, y = strokes)) +
           panel.grid.major = element_blank(),
           legend.position = "bottom") +
     scale_x_datetime(breaks = date_breaks("1 day"), 
-                     labels = date_format("%a%n%b %d"), # "Wed\n Nov 11
-                     limits = range(keys7$xday),
-                     expand = c(.1 ,60)
+                     labels = date_format("%a%n%b %d") # "Wed\n Nov 11
                     ) +
     scale_color_manual(name = "machine", values = machineColors) +
     scale_fill_manual(name = "machine", values = machineColors) +
