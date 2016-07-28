@@ -57,7 +57,9 @@ keys$xday <- paste(keys$year, keys$month, keys$mday, sep = "-") # create: yyyy-m
 keys$ytime <- paste(keys$hour, keys$min, sep = ":") # create hh:mm
 
 keys$xday <- as.POSIXct(strptime(keys$xday, "%Y-%m-%d")) # convert to POSIX
-keys$ytime <- as.POSIXct(strptime(keys$ytime, format="%H:%M")) # convert to POSIX
+keys$ytime <- as.POSIXct(strptime(keys$ytime, format = "%H:%M")) # convert to POSIX
+# keys$xday <- as.POSIXct(keys$xday, format="%Y-%m-%d") # convert to POSIX
+# keys$ytime <- as.POSIXct(keys$ytime, format="%H:%M") # convert to POSIX
 
 daynames <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday") # create vector of day names
 
@@ -67,8 +69,16 @@ cutoff <- as.POSIXct(max(keys$minute) - unixweek, origin = "1970-01-01")
 cutoff <- as.numeric(strptime(cutoff, format = "%Y-%m-%d"))
 keys7 <- subset(keys, minute > cutoff)
 
-# get keystrokes totals for totals bar plot in last 7 days
+# give me a dataset with only the last 14 days and today
+unixtwoweeks <- unixweek * 2
+cutoff <- as.POSIXct(max(keys$minute) - unixtwoweeks, origin = "1970-01-01")
+cutoff <- as.numeric(strptime(cutoff, format = "%Y-%m-%d"))
+keys14 <- subset(keys, minute > cutoff)
+
+
+# get keystrokes totals for totals bar plot in last 7 and 14 days
 k7 <- aggregate(strokes ~ xday * machine, data = keys7, FUN = sum)
+k14 <- aggregate(strokes ~ xday * machine, data = keys14, FUN = sum)
 
 #                                                    oooo  oooo  
 #                                                    `888  `888  
@@ -183,7 +193,7 @@ keys.barHours <- ggplot(keys7, aes(x = xday, y = ytime)) +
           legend.position = "none",
           panel.grid.minor.x = element_blank(),
           panel.grid.major = element_blank(),
-          plot.margin = unit(c(1,5,-32,3), units = "points")) +
+          plot.margin = unit(c(1,5,-32,4), units = "points")) +
     xlab("") +
     ylab("Time of day") +
     scale_x_datetime(breaks = date_breaks("1 day"),
@@ -214,5 +224,60 @@ keys.barTotals <- ggplot(k7, aes(x = xday, y = strokes)) +
     ylab("Keystrokes")
 
 grid.arrange(keys.barHours, keys.barTotals, heights = c(4/6, 2/6))
+
+dev.off() # close device/file
+
+#   .o        .o            .o8                                 
+# o888      .d88           "888                                 
+#  888    .d'888       .oooo888   .oooo.   oooo    ooo  .oooo.o 
+#  888  .d'  888      d88' `888  `P  )88b   `88.  .8'  d88(  "8 
+#  888  88ooo888oo    888   888   .oP"888    `88..8'   `"Y88b.  
+#  888       888      888   888  d8(  888     `888'    o.  )88b 
+# o888o     o888o     `Y8bod88P" `Y888""8o     .8'     8""888P' 
+#                                          .o..P'               
+#                                          `Y8P'                
+
+png("plots/keysOverTime_14days.png", width = 800, height = 750)
+
+keys14.barHours <- ggplot(keys14, aes(x = xday, y = ytime)) + 
+  geom_point(aes(color = machine, size = strokes), alpha = .4) +
+  scale_size(range = c(2, 12)) +
+  theme_bw() + 
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "none",
+        panel.grid.minor.x = element_blank(),
+        panel.grid.major = element_blank(),
+        plot.margin = unit(c(1,5,-32,4), units = "points")) +
+  xlab("") +
+  ylab("Time of day") +
+  scale_x_datetime(breaks = date_breaks("1 day"),
+                   expand = c(.085, 45)
+  ) +
+  scale_y_datetime(breaks = date_breaks("2 hours"),
+                   labels = date_format("%H:%M", tz = "America/Toronto"),
+                   limits = range(keys7$ytime)
+  ) +
+  guides(colour = guide_legend(override.aes = list(size = 5))) +
+  scale_color_manual(name = "machine", values = machineColors) +
+  ggtitle("keystrokes / machine (last 7 days)")
+
+keys14.barTotals <- ggplot(k14, aes(x = xday, y = strokes)) + 
+  geom_bar(aes(color = machine, fill = machine), stat = "identity") +
+  theme_bw() +
+  theme(plot.margin = unit(c(0,5,1,1),units = "points"),
+        panel.grid.minor = element_blank(),
+        panel.grid.major = element_blank(),
+        legend.position = "bottom") +
+  scale_x_datetime(breaks = date_breaks("1 day"), 
+                   labels = date_format("%a%n%b %d") # "Wed\n Nov 11
+  ) +
+  scale_color_manual(name = "machine", values = machineColors) +
+  scale_fill_manual(name = "machine", values = machineColors) +
+  # scale_fill_gradient(low = "#00BFC4", high = "#F8766D") +
+  xlab("Day") +
+  ylab("Keystrokes")
+
+grid.arrange(keys14.barHours, keys14.barTotals, heights = c(4/6, 2/6))
 
 dev.off() # close device/file
