@@ -193,6 +193,7 @@ todos.completedPerDay <- ggplot(todos.done.perday, aes(x = xday, y = completedSi
   xlab("Time") +
   ylab("Completed todos") +
   ggtitle("Completed todos per day") +
+  geom_hline(yintercept = tail(todos.done.perday$completedSinceYesterday, 1), color = 'red', alpha = 0.5) +
   scale_x_datetime(breaks=date_breaks("1 month"), 
                    labels = date_format("%b %Y")) +
   scale_y_continuous(breaks = 1:outlierCutoff) +
@@ -215,6 +216,7 @@ todos.RolledCompletedPerDay <- ggplot(rollingTodos, aes(x = xday, y = rolled)) +
   xlab("Time") +
   ylab("Completed todos") +
   ggtitle("Completed todos per day (rolling mean with 10-day window)") +
+  geom_hline(yintercept = tail(rollingTodos$rolled, 1), color = 'red', alpha = 0.5) +
   scale_x_datetime(breaks=date_breaks("1 month"), 
                    labels = date_format("%Y %b")) +
   scale_y_continuous(breaks = 1:max(todos.done.perday$completedSinceYesterday, na.rm = T))
